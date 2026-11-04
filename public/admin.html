@@ -70,7 +70,9 @@ async function checkAuth() { const res = await fetch('/api/admin/me', { credenti
 loginBtn.addEventListener('click', async () => {
   loginError.textContent = '';
   const res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({ password: passwordInput.value }) });
-  if (res.ok) showAdmin(); else loginError.textContent = 'Mot de passe incorrect';
+     const data = await res.json();
+    if (res.ok) { localStorage.setItem('admin_token', data.token); showAdmin(); } 
+    else loginError.textContent = 'Mot de passe incorrect';
 });
 passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn.click(); });
 function showAdmin() { loginScreen.style.display = 'none'; adminPanel.style.display = 'block'; loadStats(); loadBookings(); }
