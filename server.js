@@ -31,8 +31,8 @@ function verifyAdmin(req, res, next) {
 
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
-  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Mot de passe incorrect' });
-  const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  if (password !== "admin") return res.status(401).json({ error: 'Mot de passe incorrect' });
+  const token = jwt.sign({ admin: true }, "mon-secret-super-securise", { expiresIn: '7d' });
   res.cookie('admin_token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 7 * 24 * 3600 * 1000 });
   res.json({ ok: true });
 });
