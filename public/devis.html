@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devis Gratuit — DNK-CLEANING</title>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background-color: #050505; }
+    .page-devis { min-height: 100vh; display: flex; align-items: center; padding: 40px 24px; }
+    .devis-container { max-width: 1000px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .devis-text h1 { font-family: 'League Spartan'; font-size: 2.8rem; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; color: #FFF; }
+    .devis-text p { color: #B8C0CC; font-size: 1.1rem; margin-bottom: 30px; }
+    .devis-benefits { list-style: none; padding: 0; color: #FFF; }
+    .devis-benefits li { margin-bottom: 12px; font-weight: 500; }
+    .devis-form-box { background: #111; border: 1px solid rgba(255,255,255,0.08); padding: 40px; border-radius: 16px; border-top: 4px solid #00A8FF; }
+    .devis-form-box h2 { font-family: 'League Spartan'; font-size: 1.5rem; margin-bottom: 24px; text-align: center; color: #FFF; text-transform: uppercase; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #B8C0CC; }
+    .form-group input, .form-group select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 16px; color: #FFF; font-family: 'Montserrat'; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: #006CFF; }
+    .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #006CFF, #00A8FF); color: #FFF; border: none; border-radius: 100px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
+    .btn-submit:hover { transform: translateY(-2px); }
+    @media (max-width: 800px) { .devis-container { grid-template-columns: 1fr; } .devis-text h1 { font-size: 2rem; } }
+  </style>
+</head>
+<body>
+
+  <div class="page-devis">
+    <div class="devis-container">
+      
+      <div class="devis-text">
+        <span style="color:#00A8FF; font-weight:600; letter-spacing:2px; font-size:0.85rem; text-transform:uppercase;">Offre de lancement</span>
+        <h1>OBTIENS TON <span style="color:#00A8FF;">DEVIS GRATUIT</span></h1>
+        <p>Remplis ce formulaire et on te recontacte sous 24h avec un tarif sur mesure pour ta voiture ou ton canapé.</p>
+        <ul class="devis-benefits">
+          <li>✅ Réponse rapide sous 24h</li>
+          <li>✅ Produits écologiques certifiés</li>
+          <li>✅ Intervention à domicile (77/89)</li>
+          <li>✅ Sans engagement</li>
+        </ul>
+      </div>
+
+      <div class="devis-form-box">
+        <h2>Demande de devis</h2>
+        
+        <!-- ⚠️ REMPLACE L'URL CI-DESSOUS PAR CELLE DE FORMSPREE -->
+        <form action="https://formspree.io/f/TON_ID_FORMSPREE_ICI" method="POST">
+          
+          <div class="form-group">
+            <label>Prénom *</label>
+            <input type="text" name="prenom" placeholder="Ton prénom" required>
+          </div>
+          <div class="form-group">
+            <label>Téléphone *</label>
+            <input type="tel" name="telephone" placeholder="06 12 34 56 78" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" placeholder="ton@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Que souhaites-tu nettoyer ? *</label>
+            <select name="service" required>
+              <option value="">-- Choisir --</option>
+              <option value="Ma voiture">Ma voiture</option>
+              <option value="Mon canapé / textile">Mon canapé / textile</option>
+              <option value="Les deux">Les deux</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type de véhicule (si voiture)</label>
+            <select name="vehicule">
+              <option value="">-- Choisir --</option>
+              <option value="Citadine">Citadine (Clio, 208...)</option>
+              <option value="Berline / SUV">Berline / SUV (Golf, 3008...)</option>
+              <option value="Monospace">Monospace (Scénic...)</option>
+            </select>
+          </div>
+
+          <!-- Message de succès caché (Formspree l'affiche après envoi) -->
+          <input type="hidden" name="_next" value="https://dnk-cleaning.onrender.com/merci.html">
+
+          <button type="submit" class="btn-submit">Recevoir mon devis gratuit →</button>
+          <p style="text-align:center; font-size:0.8rem; color:#B8C0CC; margin-top:12px;">🔒 Tes données restent confidentielles.</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
