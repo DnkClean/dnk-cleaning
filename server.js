@@ -182,4 +182,6 @@ app.post('/api/admin/bookings/:id/refund', verifyAdmin, async (req, res) => {
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/public/admin.html'));
 
 const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => console.log(`🚀 Serveur sur http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Serveur sur le port ${PORT}`);
+});
