@@ -9,6 +9,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend'); // Ajout de Resend
 
 const app = express();
+app.set('trust proxy', 1);
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
