@@ -40,8 +40,7 @@ app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
   if (password !== "admin") return res.status(401).json({ error: 'Mot de passe incorrect' });
   const token = jwt.sign({ admin: true }, "mon-secret-super-securise", { expiresIn: '7d' });
-  res.cookie('admin_token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 7 * 24 * 3600 * 1000 });
-  res.json({ ok: true });
+  res.json({ ok: true, token });
 });
 
 app.post('/api/admin/logout', (req, res) => { res.clearCookie('admin_token'); res.json({ ok: true }); });
