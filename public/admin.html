@@ -44,6 +44,7 @@
   </style>
 </head>
 <body>
+
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <h1>DNK<span>CLEANING</span> · Admin</h1>
@@ -53,54 +54,131 @@
     <p class="error" id="loginError"></p>
   </div>
 </div>
+
 <div class="admin" id="adminPanel">
-  <div class="admin-header"><h1>DNK<span>CLEANING</span> · Admin</h1><button class="logout-btn" id="logoutBtn">Déconnexion</button></div>
+  <div class="admin-header">
+    <h1>DNK<span>CLEANING</span> · Admin</h1>
+    <button class="logout-btn" id="logoutBtn">Déconnexion</button>
+  </div>
   <div class="stats-grid" id="statsGrid"></div>
   <div class="filters">
-    <select id="filterStatus"><option value="">Tous les statuts</option><option value="confirmed">Confirmées</option><option value="pending">En attente</option><option value="cancelled">Annulées</option></select>
+    <select id="filterStatus">
+      <option value="">Tous les statuts</option>
+      <option value="confirmed">Confirmées</option>
+      <option value="pending">En attente</option>
+      <option value="cancelled">Annulées</option>
+    </select>
     <button class="action-btn" id="refreshBtn">🔄 Rafraîchir</button>
   </div>
   <div id="tableWrapper"></div>
 </div>
-<script>
-const loginScreen = document.getElementById('loginScreen'), adminPanel = document.getElementById('adminPanel');
-const loginBtn = document.getElementById('loginBtn'), passwordInput = document.getElementById('password'), loginError = document.getElementById('loginError');
 
-async function checkAuth() { const res = await fetch('/api/admin/me', { credentials: 'include' }); if (res.ok) showAdmin(); }
+<script>
+const loginScreen = document.getElementById('loginScreen');
+const adminPanel = document.getElementById('adminPanel');
+const loginBtn = document.getElementById('loginBtn');
+const passwordInput = document.getElementById('password');
+const loginError = document.getElementById('loginError');
+
+// Fonction pour récupérer les headers avec le Token
+function getHeaders() {
+  const token = localStorage.getItem('admin_token');
+  return { 'Authorization': 'Bearer ' + token };
+}
+
+async function checkAuth() {
+  const token = localStorage.getItem('admin_token');
+  if (!token) return; // Pas de token, on reste sur l'écran de login
+  const res = await fetch('/api/admin/me', { headers: getHeaders() });
+  if (res.ok) showAdmin();
+}
+
 loginBtn.addEventListener('click', async () => {
   loginError.textContent = '';
-  const res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({ password: passwordInput.value }) });
-     const data = await res.json();
-    if (res.ok) { localStorage.setItem('admin_token', data.token); showAdmin(); } 
-    else loginError.textContent = 'Mot de passe incorrect';
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: passwordInput.value }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('admin_token', data.token); // On sauvegarde le token !
+      showAdmin();
+    } else {
+      loginError.textContent = 'Mot de passe incorrect';
+    }
+  } catch (e) { loginError.textContent = 'Erreur réseau'; }
 });
+
 passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn.click(); });
-function showAdmin() { loginScreen.style.display = 'none'; adminPanel.style.display = 'block'; loadStats(); loadBookings(); }
-document.getElementById('logoutBtn').addEventListener('click', async () => { await fetch('/api/admin/logout', { method:'POST', credentials:'include' }); location.reload(); });
+
+function showAdmin() {
+  loginScreen.style.display = 'none';
+  adminPanel.style.display = 'block';
+  loadStats(); 
+  loadBookings();
+}
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem('admin_token');
+  location.reload();
+});
 
 async function loadStats() {
-  const res = await fetch('/api/admin/stats', { credentials: 'include' });
-  const s = await res.json();
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="label">Réservations</div><div class="value">${s.total_bookings}</div></div>
-    <div class="stat-card"><div class="label">Confirmées</div><div class="value accent">${s.confirmed}</div></div>
-    <div class="stat-card"><div class="label">À venir</div><div class="value">${s.upcoming}</div></div>
-    <div class="stat-card"><div class="label">CA total</div><div class="value">${s.revenue_total}€</div></div>
-    <div class="stat-card"><div class="label">Acomptes</div><div class="value accent">${s.deposits_collected}€</div></div>`;
+  try {
+    const res = await fetch('/api/admin/stats', { headers: getHeaders() });
+    if (!res.ok) throw new Error('Erreur');
+    const s = await res.json();
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="label">Réservations</div><div class="value">${s.total_bookings || 0}</div></div>
+      <div class="stat-card"><div class="label">Confirmées</div><div class="value accent">${s.confirmed || 0}</div></div>
+      <div class="stat-card"><div class="label">À venir</div><div class="value">${s.upcoming || 0}</div></div>
+      <div class="stat-card"><div class="label">CA total</div><div class="value">${s.revenue_total || 0}€</div></div>
+      <div class="stat-card"><div class="label">Acomptes</div><div class="value accent">${s.deposits_collected || 0}€</div></div>
+    `;
+  } catch (e) {
+    console.error("Erreur stats:", e);
+  }
 }
+
 async function loadBookings() {
-  const status = document.getElementById('filterStatus').value;
-  const res = await fetch('/api/admin/bookings' + (status ? `?status=${status}` : ''), { credentials: 'include' });
-  const bookings = await res.json();
-  const wrapper = document.getElementById('tableWrapper');
-  if (!bookings.length) { wrapper.innerHTML = '<div class="empty">Aucune réservation</div>'; return; }
-  wrapper.innerHTML = `<table><thead><tr><th>Client</th><th>Prestation</th><th>Date</th><th>Prix</th><th>Statut</th></tr></thead><tbody>${bookings.map(b => {
-    const [y,m,d] = b.date.split('-');
-    return `<tr><td><strong>${b.customer_name}</strong><br><small style="color:var(--muted);">${b.customer_phone}</small></td><td>${b.pack}<br><small style="color:var(--muted);">${b.vehicle}</small></td><td>${new Date(y,m-1,d).toLocaleDateString('fr-FR')} · ${b.slot.slice(0,5)}</td><td>${b.total_price}€</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`;
-  }).join('')}</tbody></table>`;
+  try {
+    const status = document.getElementById('filterStatus').value;
+    const res = await fetch('/api/admin/bookings' + (status ? `?status=${status}` : ''), { headers: getHeaders() });
+    if (!res.ok) throw new Error('Erreur');
+    const bookings = await res.json();
+    const wrapper = document.getElementById('tableWrapper');
+    
+    if (!bookings || !bookings.length) { 
+      wrapper.innerHTML = '<div class="empty">Aucune réservation</div>'; 
+      return; 
+    }
+    
+    wrapper.innerHTML = `
+      <table>
+        <thead><tr><th>Client</th><th>Prestation</th><th>Date</th><th>Prix</th><th>Statut</th></tr></thead>
+        <tbody>
+          ${bookings.map(b => {
+            const [y,m,d] = b.date.split('-');
+            return `<tr>
+              <td><strong>${b.customer_name}</strong><br><small style="color:var(--muted);">${b.customer_phone}</small></td>
+              <td>${b.pack}<br><small style="color:var(--muted);">${b.vehicle}</small></td>
+              <td>${new Date(y,m-1,d).toLocaleDateString('fr-FR')} · ${b.slot.slice(0,5)}</td>
+              <td>${b.total_price}€</td>
+              <td><span class="badge badge-${b.status}">${b.status}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  } catch (e) {
+    console.error("Erreur bookings:", e);
+  }
 }
+
 document.getElementById('filterStatus').addEventListener('change', loadBookings);
 document.getElementById('refreshBtn').addEventListener('click', () => { loadStats(); loadBookings(); });
+
 checkAuth();
 </script>
 </body>
