@@ -24,9 +24,15 @@ app.use('/api/', limiter);
 
 // ===== AUTH ADMIN =====
 function verifyAdmin(req, res, next) {
-  const token = req.cookies.admin_token;
+  const authHeader = req.headers.authorization;
+  let token = req.cookies.admin_token;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
+  
   if (!token) return res.status(401).json({ error: 'Non autorisé' });
-  try { jwt.verify(token, process.env.JWT_SECRET); next(); }
+  try { jwt.verify(token, "mon-secret-super-securise"); next(); }
   catch { res.status(401).json({ error: 'Session expirée' }); }
 }
 
