@@ -16,12 +16,18 @@
     .devis-benefits li { margin-bottom: 12px; font-weight: 500; }
     .devis-form-box { background: #111; border: 1px solid rgba(255,255,255,0.08); padding: 40px; border-radius: 16px; border-top: 4px solid #00A8FF; }
     .devis-form-box h2 { font-family: 'League Spartan'; font-size: 1.5rem; margin-bottom: 24px; text-align: center; color: #FFF; text-transform: uppercase; }
+    
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #B8C0CC; }
     .form-group input, .form-group select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 16px; color: #FFF; font-family: 'Montserrat'; outline: none; }
     .form-group input:focus, .form-group select:focus { border-color: #006CFF; }
+    
     .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #006CFF, #00A8FF); color: #FFF; border: none; border-radius: 100px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
     .btn-submit:hover { transform: translateY(-2px); }
+    
+    /* On cache ces champs au départ */
+    .dynamic-field { display: none; }
+    
     @media (max-width: 800px) { .devis-container { grid-template-columns: 1fr; } .devis-text h1 { font-size: 2rem; } }
   </style>
 </head>
@@ -46,7 +52,7 @@
         <h2>Demande de devis</h2>
         
         <!-- ⚠️ REMPLACE L'URL CI-DESSOUS PAR CELLE DE FORMSPREE -->
-        <form action="https://formspree.io/f/meaanrer" method="POST">
+        <form action="https://formspree.io/f/TON_ID_FORMSPREE_ICI" method="POST">
           
           <div class="form-group">
             <label>Prénom *</label>
@@ -60,18 +66,22 @@
             <label>Email *</label>
             <input type="email" name="email" placeholder="ton@email.com" required>
           </div>
+
           <div class="form-group">
             <label>Que souhaites-tu nettoyer ? *</label>
-            <select name="service" required>
+            <!-- On ajoute un ID pour le script JS -->
+            <select name="service" id="serviceSelect" required>
               <option value="">-- Choisir --</option>
               <option value="Ma voiture">Ma voiture</option>
-              <option value="Mon canapé / textile">Mon canapé / textile</option>
+              <option value="Mon canapé">Mon canapé / textile</option>
               <option value="Les deux">Les deux</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Type de véhicule (si voiture)</label>
-            <select name="vehicule">
+
+          <!-- CHAMP VÉHICULE (Caché au départ) -->
+          <div class="form-group dynamic-field" id="vehicleField">
+            <label>Type de véhicule</label>
+            <select name="type_vehicule" id="vehicleInput">
               <option value="">-- Choisir --</option>
               <option value="Citadine">Citadine (Clio, 208...)</option>
               <option value="Berline / SUV">Berline / SUV (Golf, 3008...)</option>
@@ -79,7 +89,21 @@
             </select>
           </div>
 
-          <!-- Message de succès caché (Formspree l'affiche après envoi) -->
+          <!-- CHAMP CANAPÉ (Caché au départ) -->
+          <div class="form-group dynamic-field" id="sofaField">
+            <label>Type de canapé</label>
+            <select name="type_canape" id="sofaInput">
+              <option value="">-- Choisir --</option>
+              <option value="1 place">1 place (fauteuil)</option>
+              <option value="2 places">2 places</option>
+              <option value="3 places">3 places</option>
+              <option value="Canapé d'angle">Canapé d'angle</option>
+              <option value="Canapé convertible">Canapé convertible (clic-clac, BZ)</option>
+              <option value="Autre">Autre (préciser dans le mail)</option>
+            </select>
+          </div>
+
+          <!-- Message de succès caché -->
           <input type="hidden" name="_next" value="https://dnk-cleaning.onrender.com/merci.html">
 
           <button type="submit" class="btn-submit">Recevoir mon devis gratuit →</button>
@@ -89,6 +113,42 @@
 
     </div>
   </div>
+
+  <script>
+    // Récupération des éléments du DOM
+    const serviceSelect = document.getElementById('serviceSelect');
+    const vehicleField = document.getElementById('vehicleField');
+    const sofaField = document.getElementById('sofaField');
+    const vehicleInput = document.getElementById('vehicleInput');
+    const sofaInput = document.getElementById('sofaInput');
+
+    // Écouteur d'événement sur le menu déroulant "Service"
+    serviceSelect.addEventListener('change', function() {
+      const value = this.value;
+
+      // On réinitialise tout (on cache tout et on enlève l'obligation)
+      vehicleField.style.display = 'none';
+      sofaField.style.display = 'none';
+      vehicleInput.required = false;
+      sofaInput.required = false;
+
+      // On affiche les bons champs selon le choix
+      if (value === 'Ma voiture') {
+        vehicleField.style.display = 'block';
+        vehicleInput.required = true;
+      } 
+      else if (value === 'Mon canapé') {
+        sofaField.style.display = 'block';
+        sofaInput.required = true;
+      } 
+      else if (value === 'Les deux') {
+        vehicleField.style.display = 'block';
+        sofaField.style.display = 'block';
+        vehicleInput.required = true;
+        sofaInput.required = true;
+      }
+    });
+  </script>
 
 </body>
 </html>
