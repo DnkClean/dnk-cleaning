@@ -6,15 +6,22 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend'); // Ajout de Resend
+const { Resend } = require('resend');
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', 1); // Indispensable pour Render
+
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-app.use(cors({ origin: process.env.BASE_URL, credentials: true }));
+// Configuration de sécurité (mot de passe en dur pour éviter les bugs de variables)
+const ADMIN_PASSWORD = "admin";
+const JWT_SECRET = "mon-secret-super-securise";
+const FROM_EMAIL = "onboarding@resend.dev";
+const ADMIN_EMAIL = "contact.dnkcleaning@gmail.com";
+
+app.use(cors({ origin: '*' }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
@@ -22,31 +29,32 @@ app.use(express.static('public'));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api/', limiter);
 
-// ===== AUTH ADMIN =====
+// Vérification par Token (au lieu du cookie)
 function verifyAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
-  let token = req.cookies.admin_token;
-  
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.split(' ')[1];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Non autorisé' });
   }
-  
-  if (!token) return res.status(401).json({ error: 'Non autorisé' });
-  try { jwt.verify(token, "mon-secret-super-securise"); next(); }
-  catch { res.status(401).json({ error: 'Session expirée' }); }
+  const token = authHeader.split(' ')[1];
+  try {
+    jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Session expirée' });
+  }
 }
 
+// Connexion admin
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
-  if (password !== "admin") return res.status(401).json({ error: 'Mot de passe incorrect' });
-  const token = jwt.sign({ admin: true }, "mon-secret-super-securise", { expiresIn: '7d' });
-  res.json({ ok: true, token });
+  if (password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Mot de passe incorrect' });
+  const token = jwt.sign({ admin: true }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ ok: true, token }); // On renvoie le token
 });
 
-app.post('/api/admin/logout', (req, res) => { res.clearCookie('admin_token'); res.json({ ok: true }); });
 app.get('/api/admin/me', verifyAdmin, (req, res) => res.json({ ok: true }));
 
-// ===== CRÉNEAUX RÉSERVÉS =====
+// Créneaux réservés
 app.get('/api/slots', async (req, res) => {
   try {
     const { from, to } = req.query;
@@ -64,7 +72,7 @@ app.get('/api/slots', async (req, res) => {
   } catch (err) { res.json({}); }
 });
 
-// ===== CRÉER PAYMENT INTENT + SAUVEGARDER + EMAIL =====
+// Paiement + Base de données + Email
 app.post('/api/create-payment-intent', async (req, res) => {
   try {
     const { amount, booking, customer } = req.body;
@@ -81,7 +89,6 @@ app.post('/api/create-payment-intent', async (req, res) => {
       receipt_email: customer.email,
     });
 
-    // 1. Sauvegarder en base
     const { error: dbError } = await supabase.from('bookings').insert({
       customer_name: customer.nom, customer_email: customer.email, customer_phone: customer.tel,
       address: customer.adresse, date: booking.date, slot: booking.slot,
@@ -92,55 +99,26 @@ app.post('/api/create-payment-intent', async (req, res) => {
 
     if (dbError) console.error('DB error:', dbError);
 
-    // 2. Envoyer les emails (Resend)
     try {
-      // Email au client
       await resend.emails.send({
-        from: `DNK-CLEANING <${process.env.FROM_EMAIL}>`,
+        from: `DNK-CLEANING <${FROM_EMAIL}>`,
         to: customer.email,
         subject: `✅ Réservation confirmée — ${booking.date} à ${booking.slot}`,
-        html: `
-          <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;background:#050505;color:#fff;padding:40px;border-radius:16px;">
-            <h1 style="color:#00A8FF;">DNK-CLEANING</h1>
-            <p>Bonjour ${customer.nom},</p>
-            <p>Votre réservation est bien confirmée !</p>
-            <div style="background:#111;padding:20px;border-radius:12px;margin:20px 0;">
-              <p><strong>Prestation :</strong> ${booking.pack} — ${booking.vehicle}</p>
-              <p><strong>Date :</strong> ${booking.date} à ${booking.slot}</p>
-              <p><strong>Adresse :</strong> ${customer.adresse}</p>
-              <p><strong>Acompte payé :</strong> 20€</p>
-              <p><strong>Reste à payer sur place :</strong> ${booking.reste}€</p>
-            </div>
-            <p>À bientôt !</p>
-          </div>
-        `,
+        html: `<p>Bonjour ${customer.nom}, votre réservation est confirmée pour le ${booking.date} à ${booking.slot}.</p>`,
       });
-
-      // Email à l'admin
       await resend.emails.send({
-        from: `DNK-CLEANING <${process.env.FROM_EMAIL}>`,
-        to: process.env.ADMIN_EMAIL,
-        subject: `💰 Nouvelle réservation : ${customer.nom} (${booking.date})`,
-        html: `
-          <h2>Nouvelle réservation !</h2>
-          <p><strong>Client :</strong> ${customer.nom} - ${customer.tel}</p>
-          <p><strong>Date :</strong> ${booking.date} à ${booking.slot}</p>
-          <p><strong>Prestation :</strong> ${booking.pack} (${booking.vehicle})</p>
-          <p><strong>Adresse :</strong> ${customer.adresse}</p>
-        `,
+        from: `DNK-CLEANING <${FROM_EMAIL}>`,
+        to: ADMIN_EMAIL,
+        subject: `💰 Nouvelle réservation : ${customer.nom}`,
+        html: `<p>Client : ${customer.nom} - ${customer.tel}. Date : ${booking.date} à ${booking.slot}.</p>`,
       });
-      console.log('📧 Emails envoyés avec succès !');
-    } catch (emailErr) {
-      console.error('Erreur Resend:', emailErr);
-    }
+    } catch (emailErr) { console.error('Erreur Resend:', emailErr.message); }
 
     res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (err) { 
-    res.status(500).json({ error: err.message }); 
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ===== ADMIN =====
+// Admin : Voir les réservations
 app.get('/api/admin/bookings', verifyAdmin, async (req, res) => {
   const { status, limit = 100 } = req.query;
   let query = supabase.from('bookings').select('*').order('date', { ascending: false }).limit(limit);
@@ -150,27 +128,25 @@ app.get('/api/admin/bookings', verifyAdmin, async (req, res) => {
   res.json(data || []);
 });
 
+// Admin : Statistiques
 app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
   const { data: all } = await supabase.from('bookings').select('status, total_price, deposit_amount, date, stripe_status');
   const arr = all || [];
   const today = new Date().toISOString().slice(0, 10);
   res.json({
-    total_bookings: arr.length,
-    confirmed: arr.filter(b => b.status === 'confirmed').length,
-    pending: arr.filter(b => b.status === 'pending').length,
-    cancelled: arr.filter(b => b.status === 'cancelled').length,
-    revenue_total: arr.filter(b => b.status === 'confirmed').reduce((s, b) => s + (b.total_price || 0), 0),
-    deposits_collected: arr.filter(b => b.stripe_status === 'paid').reduce((s, b) => s + (b.deposit_amount || 0), 0),
-    upcoming: arr.filter(b => b.date >= today && b.status === 'confirmed').length,
+    total_bookings: arr.length || 0,
+    confirmed: arr.filter(b => b.status === 'confirmed').length || 0,
+    pending: arr.filter(b => b.status === 'pending').length || 0,
+    cancelled: arr.filter(b => b.status === 'cancelled').length || 0,
+    revenue_total: arr.filter(b => b.status === 'confirmed').reduce((s, b) => s + (b.total_price || 0), 0) || 0,
+    deposits_collected: arr.filter(b => b.stripe_status === 'paid').reduce((s, b) => s + (b.deposit_amount || 0), 0) || 0,
+    upcoming: arr.filter(b => b.date >= today && b.status === 'confirmed').length || 0,
   });
 });
 
 app.patch('/api/admin/bookings/:id', verifyAdmin, async (req, res) => {
-  const { status, message } = req.body;
-  const updates = { updated_at: new Date().toISOString() };
-  if (status) updates.status = status;
-  if (message !== undefined) updates.message = message;
-  const { data, error } = await supabase.from('bookings').update(updates).eq('id', req.params.id).select().single();
+  const { status } = req.body;
+  const { data, error } = await supabase.from('bookings').update({ status }).eq('id', req.params.id).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });
