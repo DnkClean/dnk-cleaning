@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — DNK-CLEANING</title>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#050505; --card:#111111; --border:rgba(255,255,255,0.08); --text:#FFFFFF; --muted:#B8C0CC; --accent:#006CFF; --accent-2:#00A8FF; --gradient:linear-gradient(135deg,#006CFF,#00A8FF); --font-display:'League Spartan',sans-serif; --font-body:'Montserrat',sans-serif; }
+    body { font-family:var(--font-body); background:var(--bg); color:var(--text); min-height:100vh; }
+    .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .login-card { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:48px; max-width:400px; width:100%; }
+    .login-card h1 { font-family:var(--font-display); font-size:1.8rem; margin-bottom:8px; text-transform:uppercase; }
+    .login-card h1 span { color:var(--accent-2); }
+    .login-card p { color:var(--muted); font-size:.9rem; margin-bottom:28px; }
+    input, select { width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; padding:14px 16px; color:var(--text); font-family:var(--font-body); outline:none; transition:border-color .2s; }
+    input:focus, select:focus { border-color:var(--accent); }
+    .btn { width:100%; padding:14px; border-radius:100px; border:none; font-weight:600; cursor:pointer; transition:transform .2s; font-family:var(--font-body); }
+    .btn-primary { background:var(--gradient); color:#FFF; margin-top:16px; }
+    .error { color:#ff4757; font-size:.85rem; margin-top:12px; }
+    .admin { max-width:1400px; margin:0 auto; padding:32px 24px; display:none; }
+    .admin-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+    .admin-header h1 { font-family:var(--font-display); font-size:1.8rem; text-transform:uppercase; }
+    .admin-header h1 span { color:var(--accent-2); }
+    .logout-btn { background:rgba(255,255,255,.05); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:100px; cursor:pointer; font-family:var(--font-body); }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+    .stat-card .label { color:var(--muted); font-size:.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-weight:600; }
+    .stat-card .value { font-family:var(--font-display); font-size:2rem; font-weight:700; }
+    .stat-card .value.accent { color:var(--accent-2); }
+    .filters { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .filters select { max-width:200px; }
+    table { width:100%; border-collapse:collapse; background:var(--card); border-radius:16px; overflow:hidden; border:1px solid var(--border); }
+    th { background:rgba(255,255,255,.03); text-align:left; padding:14px 16px; font-size:.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); border-bottom:1px solid var(--border); }
+    td { padding:16px; border-bottom:1px solid var(--border); font-size:.9rem; }
+    .badge { display:inline-block; padding:4px 12px; border-radius:100px; font-size:.75rem; font-weight:600; text-transform:uppercase; }
+    .badge-confirmed { background:rgba(0,168,255,.15); color:var(--accent-2); }
+    .badge-pending { background:rgba(255,193,7,.15); color:#ffc107; }
+    .badge-cancelled { background:rgba(255,71,87,.15); color:#ff4757; }
+    .action-btn { background:rgba(255,255,255,.05); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:.8rem; font-family:var(--font-body); }
+    .action-btn:hover { border-color:var(--accent-2); color:var(--accent-2); }
+    .empty { text-align:center; padding:60px 20px; color:var(--muted); }
+  </style>
+</head>
+<body>
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <h1>DNK<span>CLEANING</span> · Admin</h1>
+    <p>Espace administrateur sécurisé</p>
+    <input type="password" id="password" placeholder="Mot de passe" autofocus>
+    <button class="btn btn-primary" id="loginBtn">Se connecter</button>
+    <p class="error" id="loginError"></p>
+  </div>
+</div>
+<div class="admin" id="adminPanel">
+  <div class="admin-header"><h1>DNK<span>CLEANING</span> · Admin</h1><button class="logout-btn" id="logoutBtn">Déconnexion</button></div>
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="filters">
+    <select id="filterStatus"><option value="">Tous les statuts</option><option value="confirmed">Confirmées</option><option value="pending">En attente</option><option value="cancelled">Annulées</option></select>
+    <button class="action-btn" id="refreshBtn">🔄 Rafraîchir</button>
+  </div>
+  <div id="tableWrapper"></div>
+</div>
+<script>
+const loginScreen = document.getElementById('loginScreen'), adminPanel = document.getElementById('adminPanel');
+const loginBtn = document.getElementById('loginBtn'), passwordInput = document.getElementById('password'), loginError = document.getElementById('loginError');
+
+async function checkAuth() { const res = await fetch('/api/admin/me', { credentials: 'include' }); if (res.ok) showAdmin(); }
+loginBtn.addEventListener('click', async () => {
+  loginError.textContent = '';
+  const res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify({ password: passwordInput.value }) });
+  if (res.ok) showAdmin(); else loginError.textContent = 'Mot de passe incorrect';
+});
+passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn.click(); });
+function showAdmin() { loginScreen.style.display = 'none'; adminPanel.style.display = 'block'; loadStats(); loadBookings(); }
+document.getElementById('logoutBtn').addEventListener('click', async () => { await fetch('/api/admin/logout', { method:'POST', credentials:'include' }); location.reload(); });
+
+async function loadStats() {
+  const res = await fetch('/api/admin/stats', { credentials: 'include' });
+  const s = await res.json();
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="label">Réservations</div><div class="value">${s.total_bookings}</div></div>
+    <div class="stat-card"><div class="label">Confirmées</div><div class="value accent">${s.confirmed}</div></div>
+    <div class="stat-card"><div class="label">À venir</div><div class="value">${s.upcoming}</div></div>
+    <div class="stat-card"><div class="label">CA total</div><div class="value">${s.revenue_total}€</div></div>
+    <div class="stat-card"><div class="label">Acomptes</div><div class="value accent">${s.deposits_collected}€</div></div>`;
+}
+async function loadBookings() {
+  const status = document.getElementById('filterStatus').value;
+  const res = await fetch('/api/admin/bookings' + (status ? `?status=${status}` : ''), { credentials: 'include' });
+  const bookings = await res.json();
+  const wrapper = document.getElementById('tableWrapper');
+  if (!bookings.length) { wrapper.innerHTML = '<div class="empty">Aucune réservation</div>'; return; }
+  wrapper.innerHTML = `<table><thead><tr><th>Client</th><th>Prestation</th><th>Date</th><th>Prix</th><th>Statut</th></tr></thead><tbody>${bookings.map(b => {
+    const [y,m,d] = b.date.split('-');
+    return `<tr><td><strong>${b.customer_name}</strong><br><small style="color:var(--muted);">${b.customer_phone}</small></td><td>${b.pack}<br><small style="color:var(--muted);">${b.vehicle}</small></td><td>${new Date(y,m-1,d).toLocaleDateString('fr-FR')} · ${b.slot.slice(0,5)}</td><td>${b.total_price}€</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+document.getElementById('filterStatus').addEventListener('change', loadBookings);
+document.getElementById('refreshBtn').addEventListener('click', () => { loadStats(); loadBookings(); });
+checkAuth();
+</script>
+</body>
+</html>
