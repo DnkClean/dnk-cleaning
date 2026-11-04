@@ -1,5 +1,5 @@
 // ⚠️ METS TA CLÉ PUBLIQUE STRIPE ICI
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51UXhIoRFggUwl2SsRpRCZAvX0XwhAJxSCPdYgFb9nFIi1DzPaxszYHCq9VpAt8Phm4nWNxuddxncAwsGmCKp5gum008cEyvg6t';
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51UXoxwIdrLYmf8r6xzNhqvvPUhDMISHio5DSevxbYCfAH8zAo7a0dcjC4WgxWomZEEuON37Xv0HkTdpmwInsvqRZ00OqgtUpml';
 const API_URL = '/api/create-payment-intent';
 const DEPOSIT_AMOUNT = 2000;
 const MAX_BOOKINGS_PER_SLOT = 1;
