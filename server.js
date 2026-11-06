@@ -183,7 +183,7 @@ app.post('/api/send-to-airtable', async (req, res) => {
     };
 
     // On envoie à l'API Airtable
-    const response = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Imported%20table%203`, {
+    const response = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Imported%20table%203, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`,
