@@ -67,18 +67,20 @@ app.post('/api/send-to-airtable', async (req, res) => {
       throw new Error("Configuration Airtable manquante sur Render.");
     }
 
-    const airtableData = {
-      fields: {
-        "prenom": data.prenom || "",
-        "telephone": data.telephone || "",
-        "email": data.email || "",
-        "service": data.service || "",
-        "type_vehicule": data.type_vehicule || "",
-        "type_canape": data.type_canape || "",
-        "statut": "Nouveau",
-        "source": "Meta Ads"
-      }
+     const fields = {
+      "prenom": data.prenom,
+      "telephone": data.telephone,
+      "email": data.email,
+      "service": data.service,
+      "statut": "Nouveau",
+      "source": "Meta Ads"
     };
+
+    // On n'ajoute le véhicule ou le canapé que s'ils sont remplis
+    if (data.type_vehicule) fields["type_vehicule"] = data.type_vehicule;
+    if (data.type_canape) fields["type_canape"] = data.type_canape;
+
+    const airtableData = { fields };
 
     const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
       method: 'POST',
