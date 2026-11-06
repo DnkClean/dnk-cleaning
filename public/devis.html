@@ -125,40 +125,23 @@
   </div>
 
   <script>
-    // Gestion de l'affichage dynamique (Voiture / Canapé)
     const serviceSelect = document.getElementById('serviceSelect');
     const vehicleField = document.getElementById('vehicleField');
     const sofaField = document.getElementById('sofaField');
-    const vehicleInput = document.getElementById('vehicleInput');
-    const sofaInput = document.getElementById('sofaInput');
-
+    
     serviceSelect.addEventListener('change', function() {
       const value = this.value;
-      vehicleField.style.display = 'none';
-      sofaField.style.display = 'none';
-      vehicleInput.required = false;
-      sofaInput.required = false;
-
-      if (value === 'Ma voiture') {
-        vehicleField.style.display = 'block';
-        vehicleInput.required = true;
-      } else if (value === 'Mon canapé') {
-        sofaField.style.display = 'block';
-        sofaInput.required = true;
-      } else if (value === 'Les deux') {
-        vehicleField.style.display = 'block';
-        sofaField.style.display = 'block';
-        vehicleInput.required = true;
-        sofaInput.required = true;
-      }
+      vehicleField.style.display = 'none'; sofaField.style.display = 'none';
+      if (value === 'Ma voiture') vehicleField.style.display = 'block';
+      else if (value === 'Mon canapé') sofaField.style.display = 'block';
+      else if (value === 'Les deux') { vehicleField.style.display = 'block'; sofaField.style.display = 'block'; }
     });
 
-    // Envoi du formulaire vers le serveur
     document.getElementById('devisForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
-      btn.textContent = '⏳ Envoi en cours...';
-      btn.disabled = true;
+      const errorMsg = document.getElementById('errorMsg');
+      btn.textContent = '⏳ Envoi...'; btn.disabled = true; errorMsg.style.display = 'none';
 
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData);
@@ -175,20 +158,17 @@
             <div style="text-align:center; padding: 20px 0;">
               <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
               <h2 style="color: #00A8FF;">Demande envoyée !</h2>
-              <p style="color: #B8C0CC; margin-top: 10px;">Merci ${data.prenom}, on te recontacte très vite.</p>
-              <a href="/" style="display:inline-block; margin-top:20px; color:#006CFF; text-decoration:underline;">Retour à l'accueil</a>
-            </div>
-          `;
+              <p style="color: #B8C0CC;">Merci ${data.prenom}, on te recontacte très vite.</p>
+            </div>`;
         } else {
-          throw new Error('Erreur serveur');
+          const errData = await response.json();
+          throw new Error(errData.error || 'Erreur inconnue');
         }
       } catch (err) {
-        alert('Erreur lors de l\'envoi. Contacte-nous au 06 68 73 02 82.');
-        btn.textContent = 'Recevoir mon devis gratuit →';
-        btn.disabled = false;
+        // C'est ici qu'on affiche le vrai message d'erreur à l'écran !
+        errorMsg.textContent = "Erreur : " + err.message;
+        errorMsg.style.display = 'block';
+        btn.textContent = 'Recevoir mon devis gratuit →'; btn.disabled = false;
       }
     });
   </script>
-
-</body>
-</html>
