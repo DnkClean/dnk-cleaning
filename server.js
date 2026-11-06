@@ -200,8 +200,8 @@ app.post('/api/send-to-airtable', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('Erreur Airtable:', err.message);
-    res.status(500).json({ error: "Erreur lors de l'envoi vers le CRM" });
-  }
+    res.status(500).json({ error: err.message }); 
+}
 });
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, '0.0.0.0', () => {
