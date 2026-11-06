@@ -163,6 +163,46 @@ app.post('/api/admin/bookings/:id/refund', verifyAdmin, async (req, res) => {
 
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/public/admin.html'));
 
+// ===== ENVOI VERS AIRTABLE =====
+app.post('/api/send-to-airtable', async (req, res) => {
+  try {
+    const data = req.body;
+    
+    // On prépare les données pour Airtable
+    const airtableData = {
+      fields: {
+        "prenom": data.prenom || "",
+        "telephone": data.telephone || "",
+        "email": data.email || "",
+        "service": data.service || "",
+        "type_vehicule": data.type_vehicule || "",
+        "type_canape": data.type_canape || "",
+        "statut": "Nouveau",
+        "source": "Meta Ads"
+      }
+    };
+
+    // On envoie à l'API Airtable
+    const response = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/Table%201`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(airtableData)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Erreur Airtable:', err.message);
+    res.status(500).json({ error: "Erreur lors de l'envoi vers le CRM" });
+  }
+});
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Serveur sur le port ${PORT}`);
