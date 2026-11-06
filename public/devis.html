@@ -24,8 +24,8 @@
     
     .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #006CFF, #00A8FF); color: #FFF; border: none; border-radius: 100px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
     .btn-submit:hover { transform: translateY(-2px); }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
     
-    /* On cache ces champs au départ */
     .dynamic-field { display: none; }
     
     @media (max-width: 800px) { .devis-container { grid-template-columns: 1fr; } .devis-text h1 { font-size: 2rem; } }
@@ -51,8 +51,7 @@
       <div class="devis-form-box">
         <h2>Demande de devis</h2>
         
-        <!-- ⚠️ REMPLACE L'URL CI-DESSOUS PAR CELLE DE FORMSPREE -->
-        <form action="https://formspree.io/f/TON_ID_FORMSPREE_ICI" method="POST">
+        <form id="devisForm">
           
           <div class="form-group">
             <label>Prénom *</label>
@@ -69,7 +68,6 @@
 
           <div class="form-group">
             <label>Que souhaites-tu nettoyer ? *</label>
-            <!-- On ajoute un ID pour le script JS -->
             <select name="service" id="serviceSelect" required>
               <option value="">-- Choisir --</option>
               <option value="Ma voiture">Ma voiture</option>
@@ -78,7 +76,7 @@
             </select>
           </div>
 
-          <!-- CHAMP VÉHICULE (Caché au départ) -->
+          <!-- CHAMP VÉHICULE -->
           <div class="form-group dynamic-field" id="vehicleField">
             <label>Type de véhicule</label>
             <select name="type_vehicule" id="vehicleInput">
@@ -89,24 +87,36 @@
             </select>
           </div>
 
-          <!-- CHAMP CANAPÉ (Caché au départ) -->
+          <!-- CHAMP CANAPÉ -->
           <div class="form-group dynamic-field" id="sofaField">
             <label>Type de canapé</label>
             <select name="type_canape" id="sofaInput">
               <option value="">-- Choisir --</option>
-              <option value="1 place">1 place (fauteuil)</option>
-              <option value="2 places">2 places</option>
-              <option value="3 places">3 places</option>
-              <option value="Canapé d'angle">Canapé d'angle</option>
-              <option value="Canapé convertible">Canapé convertible (clic-clac, BZ)</option>
-              <option value="Autre">Autre (préciser dans le mail)</option>
+              <optgroup label="Canapés classiques">
+                <option value="Canapé 1 place">Canapé 1 place (fauteuil)</option>
+                <option value="Canapé 2 places">Canapé 2 places</option>
+                <option value="Canapé 3 places">Canapé 3 places</option>
+                <option value="Canapé 4 places et +">Canapé 4 places et +</option>
+              </optgroup>
+              <optgroup label="Formes particulières">
+                <option value="Canapé d'angle">Canapé d'angle</option>
+                <option value="Canapé convertible">Canapé convertible (clic-clac / BZ)</option>
+                <option value="Canapé panoramique">Canapé panoramique (en U)</option>
+                <option value="Canapé méridienne">Canapé méridienne</option>
+              </optgroup>
+              <optgroup label="Autres textiles">
+                <option value="Fauteuil">Fauteuil</option>
+                <option value="Pouf / Repose-pieds">Pouf / Repose-pieds</option>
+                <option value="Banquette">Banquette</option>
+                <option value="Matelas 1 place">Matelas 1 place</option>
+                <option value="Matelas 2 places">Matelas 2 places</option>
+                <option value="Tête de lit">Tête de lit</option>
+                <option value="Chaises (lot)">Chaises (lot)</option>
+              </optgroup>
             </select>
           </div>
 
-          <!-- Message de succès caché -->
-          <input type="hidden" name="_next" value="https://dnk-cleaning.onrender.com/merci.html">
-
-          <button type="submit" class="btn-submit">Recevoir mon devis gratuit →</button>
+          <button type="submit" class="btn-submit" id="submitBtn">Recevoir mon devis gratuit →</button>
           <p style="text-align:center; font-size:0.8rem; color:#B8C0CC; margin-top:12px;">🔒 Tes données restent confidentielles.</p>
         </form>
       </div>
@@ -115,37 +125,67 @@
   </div>
 
   <script>
-    // Récupération des éléments du DOM
+    // Gestion de l'affichage dynamique (Voiture / Canapé)
     const serviceSelect = document.getElementById('serviceSelect');
     const vehicleField = document.getElementById('vehicleField');
     const sofaField = document.getElementById('sofaField');
     const vehicleInput = document.getElementById('vehicleInput');
     const sofaInput = document.getElementById('sofaInput');
 
-    // Écouteur d'événement sur le menu déroulant "Service"
     serviceSelect.addEventListener('change', function() {
       const value = this.value;
-
-      // On réinitialise tout (on cache tout et on enlève l'obligation)
       vehicleField.style.display = 'none';
       sofaField.style.display = 'none';
       vehicleInput.required = false;
       sofaInput.required = false;
 
-      // On affiche les bons champs selon le choix
       if (value === 'Ma voiture') {
         vehicleField.style.display = 'block';
         vehicleInput.required = true;
-      } 
-      else if (value === 'Mon canapé') {
+      } else if (value === 'Mon canapé') {
         sofaField.style.display = 'block';
         sofaInput.required = true;
-      } 
-      else if (value === 'Les deux') {
+      } else if (value === 'Les deux') {
         vehicleField.style.display = 'block';
         sofaField.style.display = 'block';
         vehicleInput.required = true;
         sofaInput.required = true;
+      }
+    });
+
+    // Envoi du formulaire vers le serveur
+    document.getElementById('devisForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = '⏳ Envoi en cours...';
+      btn.disabled = true;
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch('/api/send-to-airtable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          document.querySelector('.devis-form-box').innerHTML = `
+            <div style="text-align:center; padding: 20px 0;">
+              <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
+              <h2 style="color: #00A8FF;">Demande envoyée !</h2>
+              <p style="color: #B8C0CC; margin-top: 10px;">Merci ${data.prenom}, on te recontacte très vite.</p>
+              <a href="/" style="display:inline-block; margin-top:20px; color:#006CFF; text-decoration:underline;">Retour à l'accueil</a>
+            </div>
+          `;
+        } else {
+          throw new Error('Erreur serveur');
+        }
+      } catch (err) {
+        alert('Erreur lors de l\'envoi. Contacte-nous au 06 68 73 02 82.');
+        btn.textContent = 'Recevoir mon devis gratuit →';
+        btn.disabled = false;
       }
     });
   </script>
