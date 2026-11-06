@@ -89,10 +89,18 @@ app.post('/api/send-to-airtable', async (req, res) => {
       body: JSON.stringify(airtableData)
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      // On renvoie le vrai message d'erreur d'Airtable au site
-      throw new Error(errorData.error?.message || "Erreur Airtable inconnue");
+        if (!response.ok) {
+      const rawText = await response.text();
+      console.log("🔴 STATUT AIRTABLE :", response.status);
+      console.log("🔴 RÉPONSE AIRTABLE :", rawText);
+      
+      let errorMsg = `Erreur HTTP ${response.status}`;
+      try {
+          const errorData = JSON.parse(rawText);
+          errorMsg = errorData.error?.message || errorMsg;
+      } catch(e) {}
+      
+      throw new Error(errorMsg);
     }
 
     res.json({ ok: true });
