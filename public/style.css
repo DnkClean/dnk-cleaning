@@ -1,3 +1,4 @@
+/* ===== CHARTE DNK-CLEANING ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
@@ -25,7 +26,7 @@ a { text-decoration: none; color: inherit; }
 .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 18px 0; transition: all 0.3s ease; }
 .navbar.scrolled { background: rgba(5,5,5,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 10px 0; }
 .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-.nav-logo { height: 80px; object-fit: contain; }
+.nav-logo { height: 50px; object-fit: contain; }
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); transition: color 0.2s; }
 .nav-links a:hover { color: var(--accent-2); }
@@ -92,6 +93,25 @@ section { padding: 100px 0; }
 .pack-list li.duration { color: var(--accent-2); border-bottom: none; margin-top: 8px; font-weight: 600; }
 .btn-outline { display: block; text-align: center; padding: 14px; border-radius: 100px; border: 1px solid var(--border); font-weight: 600; transition: all 0.2s; }
 .btn-outline:hover { border-color: var(--accent); color: var(--accent-2); }
+
+/* ===== PRESTATION DÉSACTIVÉE (Bientôt disponible) ===== */
+.pack-card.disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+  pointer-events: none;
+  position: relative;
+}
+.badge-coming {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: #333; color: #FFF; padding: 6px 20px; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 700; white-space: nowrap; z-index: 10;
+}
+.disabled-btn {
+  background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: transparent; cursor: not-allowed;
+}
+.pack-option.disabled-option { opacity: 0.4; cursor: not-allowed; }
+.pack-option.disabled-option .pack-option-inner { pointer-events: none; background: rgba(255,255,255,0.02); }
+/* ======================================================= */
 
 .ba-container { position: relative; max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; cursor: ew-resize; border: 1px solid var(--border); }
 .ba-after, .ba-before { position: absolute; inset: 0; background-size: cover; background-position: center; }
