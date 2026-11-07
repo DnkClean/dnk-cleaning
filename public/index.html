@@ -78,6 +78,8 @@
     <div class="container">
       <div class="section-head"><span class="section-tag">Nos packs</span><h2>CHOISIS TON <span class="gradient-text">PACK</span></h2></div>
       <div class="packs-grid">
+        
+        <!-- PACK INTÉRIEUR -->
         <div class="pack-card">
           <div class="pack-head"><span class="pack-label">Nettoyage Intérieur</span><div class="pack-price"><span class="old">139€</span><span class="new">129€</span></div></div>
           <ul class="pack-list">
@@ -85,14 +87,18 @@
           </ul>
           <a href="#reservation" class="btn-outline">Choisir ce pack →</a>
         </div>
-        <div class="pack-card featured">
-          <span class="badge-popular">⭐ Populaire</span>
+
+        <!-- PACK COMPLET DÉSACTIVÉ -->
+        <div class="pack-card disabled">
+          <span class="badge-coming">Bientôt disponible</span>
           <div class="pack-head"><span class="pack-label">Nettoyage Complet</span><div class="pack-price"><span class="old">199€</span><span class="new">179€</span></div></div>
           <ul class="pack-list">
             <li>Tout le pack Nettoyage Intérieur inclus</li><li>Nettoyage passages de roues</li><li>Lavage manuel haute précision</li><li>Séchage premium sans traces</li><li>Finition parfum de luxe</li><li class="duration">⏱ Durée : 2h30 à 3 heures</li>
           </ul>
-          <a href="#reservation" class="btn-primary">Choisir ce pack →</a>
+          <button class="btn-outline disabled-btn" disabled>Bientôt disponible</button>
         </div>
+
+        <!-- PACK CANAPÉ -->
         <div class="pack-card">
           <div class="pack-head"><span class="pack-label">Nettoyage Canapé</span><div class="pack-price"><span class="new">89€</span></div></div>
           <ul class="pack-list">
@@ -100,6 +106,7 @@
           </ul>
           <a href="#reservation" class="btn-outline">Choisir ce pack →</a>
         </div>
+
       </div>
     </div>
   </section>
@@ -146,7 +153,16 @@
           <div class="step-head"><span class="step-num">2</span><h3>Ton pack</h3></div>
           <div class="pack-selector">
             <label class="pack-option"><input type="radio" name="pack" value="interieur" data-price="129" checked><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Intérieur</span><span class="pack-option-price" data-base="129">129€</span></div><p>Aspiration, shampoing sièges, vitrerie</p></div></label>
-            <label class="pack-option"><input type="radio" name="pack" value="complet" data-price="179"><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Complet ⭐</span><span class="pack-option-price" data-base="179">179€</span></div><p>Tout l'intérieur + lavage extérieur</p></div></label>
+            
+            <!-- PACK COMPLET DÉSACTIVÉ -->
+            <label class="pack-option disabled-option">
+              <input type="radio" name="pack" value="complet" data-price="179" disabled>
+              <div class="pack-option-inner">
+                <div class="pack-option-head"><span>Nettoyage Complet (Bientôt)</span><span class="pack-option-price" data-base="179">179€</span></div>
+                <p>Tout l'intérieur + lavage extérieur</p>
+              </div>
+            </label>
+
             <label class="pack-option"><input type="radio" name="pack" value="canape" data-price="89"><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Canapé</span><span class="pack-option-price" data-base="89">89€</span></div><p>Shampoing profond</p></div></label>
           </div>
         </div>
