@@ -269,3 +269,60 @@ section { padding: 100px 0; }
   .form-row { grid-template-columns: 1fr; }
   .vehicle-grid { grid-template-columns: 1fr 1fr; }
 }
+/* ===== STYLE DE LA FAQ (ACCORDÉON) ===== */
+.faq-details-section {
+  padding: 0 24px 100px;
+  background: var(--bg);
+}
+
+.faq-item {
+  background: #111;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faq-item[open] {
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(0,108,255,0.1);
+}
+
+.faq-item summary {
+  padding: 20px 24px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #FFF;
+  cursor: pointer;
+  list-style: none; /* Enlève la flèche par défaut */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-body);
+}
+
+/* On crée notre propre icône "+" */
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  font-size: 1.5rem;
+  color: var(--accent-2);
+  transition: transform 0.3s ease;
+}
+
+.faq-item[open] summary::after {
+  content: '−'; /* Devient un "-" quand c'est ouvert */
+  transform: rotate(180deg);
+}
+
+.faq-item p {
+  padding: 0 24px 24px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
