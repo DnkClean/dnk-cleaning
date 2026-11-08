@@ -84,7 +84,20 @@ function updateSummary() {
 document.getElementById('submitBooking')?.addEventListener('click', (e) => {
   e.preventDefault();
   const form = document.getElementById('bookingForm');
-  if (!form.checkValidity()) { form.reportValidity(); return; }
+  
+  // Si on n'est pas à l'étape 3 (coordonnées), on y va automatiquement
+  if (currentStep !== 3) {
+    goToStep(3);
+    return;
+  }
+
+  // Si on est à l'étape 3, on vérifie que le formulaire est bien rempli
+  if (!form.checkValidity()) { 
+    form.reportValidity(); 
+    return; 
+  }
+  
+  // Si tout est bon, on fait défiler vers le calendrier
   document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
 });
 
