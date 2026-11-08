@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>À Propos — DNK-CLEANING</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styles spécifiques à la page À propos */
+    body { background-color: var(--bg); }
+    
+    /* --- HERO SECTION --- */
+    .about-hero {
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      padding: 140px 24px 80px;
+      background: linear-gradient(to right, rgba(5,5,5,0.95), rgba(5,5,5,0.7)), url('https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1920&auto=format&fit=crop') center/cover;
+      border-bottom: 2px solid var(--accent);
+    }
+    .about-hero-content { max-width: 1200px; margin: 0 auto; width: 100%; }
+    .about-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .about-hero h1 span { color: var(--accent-2); }
+    .about-hero .signature-text {
+      font-family: var(--font-signature);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--accent-2);
+      line-height: 1;
+    }
+    
+    /* --- SECTION HISTOIRE --- */
+    .story-section { padding: 100px 24px; background: #FFFFFF; color: #111; }
+    .story-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .story-image { position: relative; transform: rotate(-3deg); border: 10px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; }
+    .story-image img { width: 100%; display: block; }
+    .story-text .tag { color: var(--accent); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .story-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 20px; color: #111; text-transform: uppercase; }
+    .story-text p { color: #444; font-size: 1.05rem; margin-bottom: 16px; line-height: 1.7; }
+    
+    /* --- SECTION ENGAGEMENTS --- */
+    .engagements-section { padding: 100px 24px; background: var(--bg); position: relative; }
+    .engagements-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .engagements-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 24px; color: #fff; text-transform: uppercase; }
+    .engagements-text h2 span { color: var(--accent-2); font-family: var(--font-signature); text-transform: none; font-size: 3rem; }
+    .engagements-text ul { list-style: none; padding: 0; }
+    .engagements-text li { color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .engagements-text li::before { content: '✔'; color: var(--accent-2); font-weight: bold; font-size: 1.2rem; }
+    .engagements-image { transform: rotate(2deg); border-radius: 16px; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(0,108,255,0.2); }
+    .engagements-image img { width: 100%; display: block; }
+    
+    /* --- SECTION POURQUOI NOUS --- */
+    .why-us-section { padding: 100px 24px; background: #FFFFFF; color: #111; }
+    .why-us-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .why-us-image { transform: rotate(-2deg); border: 10px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; }
+    .why-us-image img { width: 100%; display: block; }
+    .why-us-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 24px; color: #111; text-transform: uppercase; }
+    .why-us-text h2 span { color: var(--accent); font-family: var(--font-signature); text-transform: none; font-size: 3rem; }
+    .why-us-text p { color: #444; font-size: 1.05rem; margin-bottom: 24px; }
+    .why-us-text ul { list-style: none; padding: 0; }
+    .why-us-text li { font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .why-us-text li::before { content: '✔'; color: var(--accent); font-weight: bold; }
+    
+    /* --- FAQ & FOOTER BLOCK --- */
+    .faq-section { padding: 80px 24px; background: var(--bg); display: flex; justify-content: center; }
+    .faq-wrapper { max-width: 1100px; width: 100%; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; border-radius: 24px; padding: 60px; border: 1px solid var(--border); }
+    .faq-left { max-width: 500px; }
+    .faq-left h2 { font-family: var(--font-display); font-size: 2rem; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+    .faq-left p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 24px; }
+    .faq-right { text-align: right; }
+    .faq-right .signature { font-family: var(--font-signature); font-size: 3rem; color: #fff; line-height: 1; }
+    .faq-right .slogan { font-family: var(--font-signature); font-size: 2rem; color: var(--accent-2); }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 900px) {
+      .story-wrapper, .engagements-wrapper, .why-us-wrapper { grid-template-columns: 1fr; }
+      .story-image, .why-us-image, .engagements-image { transform: none; margin-bottom: 30px; }
+      .faq-wrapper { flex-direction: column; text-align: center; padding: 40px 24px; }
+      .faq-left h2 { justify-content: center; }
+      .faq-right { text-align: center; margin-top: 40px; }
+      .engagements-text h2 span, .why-us-text h2 span { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR (simplifiée pour cette page) -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo-container">
+        <img src="images/logo.png" alt="DNK-CLEANING Logo" class="nav-logo">
+      </a>
+      <nav class="nav-links">
+        <a href="/">Accueil</a>
+        <a href="/#services">Nos services</a>
+        <a href="a-propos.html" style="color: var(--accent-2); font-weight: 600;">À propos</a>
+        <a href="devis.html">Contact</a>
+        <a href="/#reservation" class="btn-nav">Réserver</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="about-hero-content">
+      <div class="hero-badge" style="margin-bottom: 20px;">À PROPOS DE NOUS</div>
+      <h1>Tout est parti<br>d'une <span>idée...</span></h1>
+      <div class="signature-text">et d'un peu de flemme !</div>
+    </div>
+  </section>
+
+  <!-- SECTION HISTOIRE -->
+  <section class="story-section">
+    <div class="story-wrapper">
+      <div class="story-image">
+        <!-- Remplace l'image par une vraie photo de toi ou du matériel -->
+        <img src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop" alt="Lavage auto">
+      </div>
+      <div class="story-text">
+        <div class="tag">📅 Juillet 2025</div>
+        <h2>L'histoire de DNK Cleaning</h2>
+        <p>En juillet 2025, <strong>DNK Cleaning</strong> voit le jour avec une idée simple : pourquoi se déplacer et perdre du temps à nettoyer sa voiture quand on peut faire autrement ?</p>
+        <p>À l'origine du projet, une envie d'entreprendre, de créer quelque chose à soi et de répondre à un besoin que beaucoup connaissent : avoir une voiture propre sans avoir à s'en occuper.</p>
+        <p>Ce qui a commencé par une réflexion personnelle est rapidement devenu un véritable projet entrepreneurial.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION ENGAGEMENTS -->
+  <section class="engagements-section">
+    <div class="engagements-wrapper">
+      <div class="engagements-text">
+        <h2>Nos <span>engagements</span></h2>
+        <p style="color: #B8C0CC; margin-bottom: 24px;">Chez DNK Cleaning, nous nous engageons à vous offrir :</p>
+        <ul>
+          <li>Un service de qualité</li>
+          <li>Un travail soigné et minutieux</li>
+          <li>Une relation de confiance</li>
+          <li>Votre satisfaction avant tout</li>
+        </ul>
+      </div>
+      <div class="engagements-image">
+        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?q=80&w=1000&auto=format&fit=crop" alt="Nettoyage professionnel">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION POURQUOI NOUS -->
+  <section class="why-us-section">
+    <div class="why-us-wrapper">
+      <div class="why-us-image">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop" alt="Voiture propre">
+      </div>
+      <div class="why-us-text">
+        <h2>Pourquoi nous <span>choisir ?</span></h2>
+        <p>Parce qu'un environnement propre, c'est bien plus qu'une image. C'est un confort, une fierté et un gain de temps au quotidien.</p>
+        <ul>
+          <li>Une approche moderne et flexible</li>
+          <li>Un résultat à la hauteur de vos attentes</li>
+          <li>Un service pensé pour vous</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION FAQ -->
+  <section class="faq-section">
+    <div class="faq-wrapper">
+      <div class="faq-left">
+        <h2>❓ FAQ</h2>
+        <p>Une question ? On y répond ! Retrouvez ici les réponses aux questions les plus fréquentes sur nos services.</p>
+        <a href="devis.html" class="btn-primary">Voir les FAQ →</a>
+      </div>
+      <div class="faq-right">
+        <div class="signature">DNK Cleaning</div>
+        <div class="slogan">Vous profitez, on s'occupe du reste.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER (réduit) -->
+  <footer class="footer" style="padding: 30px 0;">
+    <div class="container" style="text-align: center;">
+      <p style="color: var(--text-muted); font-size: 0.9rem;">© 2026 DNK-CLEANING — Tous droits réservés</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
