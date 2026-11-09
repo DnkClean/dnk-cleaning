@@ -9,46 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Styles spécifiques à la page À propos */
     body { background-color: var(--bg); }
-    
-    /* --- HERO SECTION --- */
-    .about-hero {
-      position: relative;
-      min-height: 60vh;
-      display: flex;
-      align-items: center;
-      padding: 140px 24px 80px;
-      background: linear-gradient(to right, rgba(5,5,5,0.95), rgba(5,5,5,0.7)), url('https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1920&auto=format&fit=crop') center/cover;
-      border-bottom: 2px solid var(--accent);
-    }
+    .about-hero { position: relative; min-height: 60vh; display: flex; align-items: center; padding: 140px 24px 80px; background: linear-gradient(to right, rgba(5,5,5,0.95), rgba(5,5,5,0.7)), url('https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1920&auto=format&fit=crop') center/cover; border-bottom: 2px solid var(--accent); }
     .about-hero-content { max-width: 1200px; margin: 0 auto; width: 100%; }
-    .about-hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(3rem, 6vw, 5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
+    .about-hero h1 { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 10px; text-transform: uppercase; }
     .about-hero h1 span { color: var(--accent-2); }
-    .about-hero .signature-text {
-      font-family: var(--font-signature);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      color: var(--accent-2);
-      line-height: 1;
-    }
+    .about-hero .signature-text { font-family: var(--font-signature); font-size: clamp(2.5rem, 5vw, 4rem); color: var(--accent-2); line-height: 1; }
     
-    /* --- SECTION HISTOIRE --- */
     .story-section { padding: 100px 24px; background: #FFFFFF; color: #111; }
     .story-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-    .story-image { position: relative; transform: rotate(-3deg); border: 10px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; }
-    .story-image img { width: 100%; display: block; }
     .story-text .tag { color: var(--accent); font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .story-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 20px; color: #111; text-transform: uppercase; }
     .story-text p { color: #444; font-size: 1.05rem; margin-bottom: 16px; line-height: 1.7; }
     
-    /* --- SECTION ENGAGEMENTS --- */
     .engagements-section { padding: 100px 24px; background: var(--bg); position: relative; }
     .engagements-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .engagements-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 24px; color: #fff; text-transform: uppercase; }
@@ -56,14 +29,9 @@
     .engagements-text ul { list-style: none; padding: 0; }
     .engagements-text li { color: #fff; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     .engagements-text li::before { content: '✔'; color: var(--accent-2); font-weight: bold; font-size: 1.2rem; }
-    .engagements-image { transform: rotate(2deg); border-radius: 16px; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(0,108,255,0.2); }
-    .engagements-image img { width: 100%; display: block; }
     
-    /* --- SECTION POURQUOI NOUS --- */
     .why-us-section { padding: 100px 24px; background: #FFFFFF; color: #111; }
     .why-us-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-    .why-us-image { transform: rotate(-2deg); border: 10px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; }
-    .why-us-image img { width: 100%; display: block; }
     .why-us-text h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 24px; color: #111; text-transform: uppercase; }
     .why-us-text h2 span { color: var(--accent); font-family: var(--font-signature); text-transform: none; font-size: 3rem; }
     .why-us-text p { color: #444; font-size: 1.05rem; margin-bottom: 24px; }
@@ -71,7 +39,6 @@
     .why-us-text li { font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-weight: 500; }
     .why-us-text li::before { content: '✔'; color: var(--accent); font-weight: bold; }
     
-    /* --- FAQ & FOOTER BLOCK --- */
     .faq-section { padding: 80px 24px; background: var(--bg); display: flex; justify-content: center; }
     .faq-wrapper { max-width: 1100px; width: 100%; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; border-radius: 24px; padding: 60px; border: 1px solid var(--border); }
     .faq-left { max-width: 500px; }
@@ -81,7 +48,15 @@
     .faq-right .signature { font-family: var(--font-signature); font-size: 3rem; color: #fff; line-height: 1; }
     .faq-right .slogan { font-family: var(--font-signature); font-size: 2rem; color: var(--accent-2); }
 
-    /* --- RESPONSIVE --- */
+    .faq-details-section { padding: 0 24px 100px; background: var(--bg); }
+    .faq-item { background: #111; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; transition: all 0.3s ease; }
+    .faq-item[open] { border-color: var(--accent); box-shadow: 0 4px 20px rgba(0,108,255,0.1); }
+    .faq-item summary { padding: 20px 24px; font-weight: 600; font-size: 1.1rem; color: #FFF; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-body); }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; font-size: 1.5rem; color: var(--accent-2); transition: transform 0.3s ease; }
+    .faq-item[open] summary::after { content: '−'; transform: rotate(180deg); }
+    .faq-item p { padding: 0 24px 24px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
     @media (max-width: 900px) {
       .story-wrapper, .engagements-wrapper, .why-us-wrapper { grid-template-columns: 1fr; }
       .story-image, .why-us-image, .engagements-image { transform: none; margin-bottom: 30px; }
@@ -94,24 +69,22 @@
 </head>
 <body>
 
-  <!-- NAVBAR (simplifiée pour cette page) -->
   <header class="navbar scrolled" id="navbar">
     <div class="nav-container">
-      <a href="/" class="logo-container">
+      <a href="index.html" class="logo-container">
         <img src="images/logo.png" alt="DNK-CLEANING Logo" class="nav-logo">
       </a>
       <nav class="nav-links">
-        <a href="/">Accueil</a>
-        <a href="/#services">Nos services</a>
+        <a href="index.html">Accueil</a>
+        <a href="index.html#services">Nos services</a>
         <a href="a-propos.html" style="color: var(--accent-2); font-weight: 600;">À propos</a>
         <a href="devis.html">Contact</a>
-        <a href="/#reservation" class="btn-nav">Réserver</a>
+        <a href="index.html#reservation" class="btn-nav">Réserver</a>
       </nav>
       <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </header>
 
-  <!-- HERO -->
   <section class="about-hero">
     <div class="about-hero-content">
       <div class="hero-badge" style="margin-bottom: 20px;">À PROPOS DE NOUS</div>
@@ -120,13 +93,8 @@
     </div>
   </section>
 
-  <!-- SECTION HISTOIRE -->
   <section class="story-section">
     <div class="story-wrapper">
-      <div class="story-image">
-        <!-- Remplace l'image par une vraie photo de toi ou du matériel -->
-        <img src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop" alt="Lavage auto">
-      </div>
       <div class="story-text">
         <div class="tag">📅 Juillet 2025</div>
         <h2>L'histoire de DNK Cleaning</h2>
@@ -137,7 +105,6 @@
     </div>
   </section>
 
-  <!-- SECTION ENGAGEMENTS -->
   <section class="engagements-section">
     <div class="engagements-wrapper">
       <div class="engagements-text">
@@ -150,18 +117,11 @@
           <li>Votre satisfaction avant tout</li>
         </ul>
       </div>
-      <div class="engagements-image">
-        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?q=80&w=1000&auto=format&fit=crop" alt="Nettoyage professionnel">
-      </div>
     </div>
   </section>
 
-  <!-- SECTION POURQUOI NOUS -->
   <section class="why-us-section">
     <div class="why-us-wrapper">
-      <div class="why-us-image">
-        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop" alt="Voiture propre">
-      </div>
       <div class="why-us-text">
         <h2>Pourquoi nous <span>choisir ?</span></h2>
         <p>Parce qu'un environnement propre, c'est bien plus qu'une image. C'est un confort, une fierté et un gain de temps au quotidien.</p>
@@ -174,14 +134,11 @@
     </div>
   </section>
 
-  <!-- SECTION FAQ -->
-    <!-- SECTION FAQ -->
   <section class="faq-section">
     <div class="faq-wrapper">
       <div class="faq-left">
         <h2>❓ FAQ</h2>
         <p>Une question ? On y répond ! Retrouvez ici les réponses aux questions les plus fréquentes sur nos services.</p>
-        <!-- Le bouton pointe maintenant vers l'ancre #faq-details -->
         <a href="#faq-details" class="btn-primary">Voir les FAQ →</a>
       </div>
       <div class="faq-right">
@@ -191,44 +148,31 @@
     </div>
   </section>
 
-  <!-- NOUVELLE SECTION : LES VRAIES QUESTIONS / RÉPONSES -->
   <section id="faq-details" class="faq-details-section">
     <div class="container" style="max-width: 800px; margin: 0 auto;">
-      
-      <!-- Question 1 -->
       <details class="faq-item">
         <summary>Intervenez-vous vraiment à domicile ?</summary>
         <p>Oui, c'est notre priorité ! Nous nous déplaçons chez vous à Provins, Sens et dans un rayon de 30 km (77/89). Nous venons avec tout le matériel professionnel nécessaire.</p>
       </details>
-
-      <!-- Question 2 -->
       <details class="faq-item">
         <summary>Combien de temps dure une prestation ?</summary>
         <p>Cela dépend de la formule choisie. Pour un nettoyage intérieur de voiture, comptez entre 1h10 et 1h45. Pour un canapé, entre 1h et 1h30. Nous prenons le temps nécessaire pour un résultat impeccable.</p>
       </details>
-
-      <!-- Question 3 -->
       <details class="faq-item">
         <summary>Quels produits utilisez-vous ?</summary>
         <p>Nous utilisons exclusivement des produits certifiés écologiques. Ils sont efficaces contre les taches et les bactéries, mais sans danger pour vos enfants, vos animaux et l'environnement.</p>
       </details>
-
-      <!-- Question 4 -->
       <details class="faq-item">
         <summary>Comment se passe le paiement ?</summary>
         <p>Pour sécuriser votre rendez-vous, nous demandons un acompte de 20€ en ligne par carte bancaire (via Stripe). Le reste du montant est à régler sur place, une fois la prestation terminée et validée ensemble.</p>
       </details>
-
-      <!-- Question 5 -->
       <details class="faq-item">
-        <summary>Que se passe-t-il si la voiture est très sale (poils de chien, taches incrustées) ?</summary>
+        <summary>Que se passe-t-il si la voiture est très sale ?</summary>
         <p>Pas de panique, nous sommes équipés pour les cas les plus difficiles. Si la prestation nécessite un traitement spécifique ou plus de temps, nous vous le signalerons avant de commencer.</p>
       </details>
-
     </div>
   </section>
 
-  <!-- FOOTER (réduit) -->
   <footer class="footer" style="padding: 30px 0;">
     <div class="container" style="text-align: center;">
       <p style="color: var(--text-muted); font-size: 0.9rem;">© 2026 DNK-CLEANING — Tous droits réservés</p>
