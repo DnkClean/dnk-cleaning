@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (prevBtn) prevBtn.disabled = currentStep === 1;
     if (nextBtn) nextBtn.textContent = currentStep === totalSteps ? '✓ Envoyer' : 'Suivant →';
   }
+
   if (prevBtn) prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
   if (nextBtn) nextBtn.addEventListener('click', () => { 
     if (currentStep === totalSteps) {
@@ -29,6 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       goToStep(currentStep + 1); 
     }
+  });
+
+  // ==========================================
+  // BOUTON "ENVOYER MA DEMANDE" (LE BOUTON BLEU)
+  // ==========================================
+  document.getElementById('submitBooking')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // 1. Si on n'est pas à l'étape 3, on y va automatiquement
+    if (currentStep !== 3) {
+      goToStep(3);
+      return;
+    }
+
+    // 2. Si on est à l'étape 3, on vérifie que les champs sont remplis
+    const form = document.getElementById('bookingForm');
+    if (!form.checkValidity()) { 
+      form.reportValidity(); 
+      return; 
+    }
+    
+    // 3. Si tout est bon, on scrolle vers le calendrier
+    document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
   });
 
   // ==========================================
@@ -41,16 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const vehicleType = btn.dataset.vehicle;
       
-      // --- SYNCHRONISATION AUTOMATIQUE DU PACK ---
+      // SYNCHRONISATION AUTOMATIQUE DU PACK
       if (vehicleType === 'canape') {
-        // Si Canapé, on coche le pack Canapé
         const canapePack = document.querySelector('input[name="pack"][value="canape"]');
         if (canapePack) {
           canapePack.checked = true;
-          canapePack.dispatchEvent(new Event('change')); // Déclenche la mise à jour du prix
+          canapePack.dispatchEvent(new Event('change'));
         }
       } else {
-        // Si c'est une voiture, on coche le pack Intérieur
         const interieurPack = document.querySelector('input[name="pack"][value="interieur"]');
         if (interieurPack) {
           interieurPack.checked = true;
@@ -66,16 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   document.querySelectorAll('input[name="pack"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      // --- SYNCHRONISATION AUTOMATIQUE DU VÉHICULE ---
+      // SYNCHRONISATION AUTOMATIQUE DU VÉHICULE
       if (radio.value === 'canape') {
-        // Si on choisit le pack Canapé, on force le véhicule sur Canapé
         const canapeBtn = document.querySelector('.vehicle-option[data-vehicle="canape"]');
         if (canapeBtn) {
           document.querySelectorAll('.vehicle-option').forEach(b => b.classList.remove('active'));
           canapeBtn.classList.add('active');
         }
       } else {
-        // Si on choisit un pack voiture, et que le véhicule était Canapé, on remet Citadine
         const activeVehicle = document.querySelector('.vehicle-option.active');
         if (activeVehicle && activeVehicle.dataset.vehicle === 'canape') {
           const citadineBtn = document.querySelector('.vehicle-option[data-vehicle="citadine"]');
@@ -99,9 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const packInput = document.querySelector('input[name="pack"]:checked');
     const packPrice = packInput ? parseFloat(packInput.dataset.price) : 129;
     
-    // Si c'est un canapé, on annule le multiplicateur de voiture
     const finalMultiplier = (vehicle?.dataset.vehicle === 'canape') ? 1 : multiplier;
-    
     const total = Math.round(packPrice * finalMultiplier);
     const supp = total - packPrice;
 
@@ -110,12 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('sumSupp')) document.getElementById('sumSupp').textContent = supp > 0 ? `+${supp}€` : '+0€';
     if (document.getElementById('sumTotal')) document.getElementById('sumTotal').textContent = `${total}€`;
 
-    // Mettre à jour les prix affichés dans les cases
     document.querySelectorAll('.pack-option-price').forEach(el => {
       el.textContent = `${Math.round(parseFloat(el.dataset.base) * finalMultiplier)}€`;
     });
 
-    // Mettre à jour le récapitulatif du calendrier
     if (document.getElementById('recapVehicle')) document.getElementById('recapVehicle').textContent = vehicleName;
     if (document.getElementById('recapPack')) document.getElementById('recapPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
     if (document.getElementById('recapTotal')) document.getElementById('recapTotal').textContent = `${total}€`;
@@ -216,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('recapTime').textContent = selectedSlot;
       goBtn.disabled = false;
       
-      // Sauvegarde des données pour Stripe
       const total = parseInt(document.getElementById('sumTotal').textContent);
       window._bookingData = { 
         date: selectedDate, 
@@ -307,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            amount: 2000, // 20€ en centimes
+            amount: 2000,
             booking: window._bookingData, 
             customer: window._customerData 
           })
