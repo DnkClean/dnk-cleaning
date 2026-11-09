@@ -384,7 +384,55 @@
       <a href="mentions-legales.html" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: underline;">Mentions légales</a>
     </div>
   </footer>
+  <script>
+    // Animation de décompte pour les statistiques
+    document.addEventListener("DOMContentLoaded", () => {
+      const statsSection = document.getElementById("stats-section");
+      
+      if (statsSection) {
+        const numbers = statsSection.querySelectorAll(".stat-num");
 
+        // On observe quand la section entre dans l'écran
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              numbers.forEach(num => {
+                const target = parseFloat(num.getAttribute("data-target"));
+                const decimals = parseInt(num.getAttribute("data-decimals")) || 0;
+                const suffix = num.getAttribute("data-suffix") || "";
+                const duration = 2000; // Durée de l'animation en millisecondes (2 secondes)
+                let startTime = null;
+
+                function animateCount(timestamp) {
+                  if (!startTime) startTime = timestamp;
+                  const progress = Math.min((timestamp - startTime) / duration, 1);
+                  
+                  // Formule d'accélération (easeOutQuart) pour que ça ralentisse à la fin
+                  const easeOut = 1 - Math.pow(1 - progress, 4);
+                  
+                  const current = target * easeOut;
+                  
+                  // Affichage du chiffre avec la bonne décimale
+                  num.textContent = current.toFixed(decimals).replace(".", ",") + suffix;
+
+                  if (progress < 1) {
+                    window.requestAnimationFrame(animateCount);
+                  }
+                }
+                window.requestAnimationFrame(animateCount);
+              });
+              
+              // On arrête d'observer une fois que l'animation s'est lancée
+              obs.unobserve(statsSection);
+            }
+          });
+        }, { threshold: 0.5 }); // Se déclenche quand 50% de la section est visible
+
+        observer.observe(statsSection);
+      }
+    });
+  </script>
+  
   <script src="script.js"></script>
 </body>
 </html>
