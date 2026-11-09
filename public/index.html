@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DNK-CLEANING : Nettoyage textile & auto à Provins, Sens et alentours.">
-  <title>DNK-CLEANING — Nettoyage Textile & Auto</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <!-- SEO LOCAL OPTIMISÉ -->
+  <title>Nettoyage Auto & Canapé à Domicile (77/89) | DNK-CLEANING</title>
+  <meta name="description" content="DNK-CLEANING : Lavage auto et nettoyage de canapé à domicile à Provins, Sens et alentours. Produits écologiques, résultat garanti. Réservez en ligne avec 20€ d'acompte.">
+  <meta name="keywords" content="nettoyage voiture Provins, lavage auto Sens, nettoyage canapé 77, détachage siège voiture, DNK Cleaning">
+  
+  <!-- Balises pour Facebook / Instagram (Partage) -->
+  <meta property="og:title" content="DNK-CLEANING - Nettoyage Auto & Canapé à Domicile">
+  <meta property="og:description" content="Redonnez l'éclat à votre voiture ou votre canapé sans bouger de chez vous. Intervention à Provins, Sens et alentours.">
+  <meta property="og:image" content="https://dnk-cleaning.fr/images/apres.jpg">
+  <meta property="og:type" content="website">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "DNK-CLEANING",
+    "image": "https://dnk-cleaning.fr/images/logo.png",
+    "description": "Nettoyage textile et automobile à domicile.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Provins",
+      "postalCode": "77160",
+      "addressCountry": "FR"
+    },
+    "telephone": "+33668730282",
+    "url": "https://dnk-cleaning.fr"
+  }
+  </script>
 </head>
 <body>
 
@@ -283,8 +302,10 @@
             <div class="recap-line recap-deposit"><span>Acompte à régler</span><strong>20€</strong></div>
           </div>
           <button class="btn-primary btn-full" id="goToPayment" disabled>💳 Réserver & payer l'acompte (20€)</button>
-          <p class="summary-note">🔒 Paiement sécurisé Stripe</p>
-        </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px; align-items: center;">
+            <p class="summary-note" style="margin: 0;">🔒 Paiement sécurisé Stripe</p>
+            <p class="summary-note" style="margin: 0; color: #00A8FF; font-weight: 600;">Réponse garantie sous 24h</p>
+          </div>
       </div>
     </div>
   </section>
@@ -313,7 +334,11 @@
         </div>
         <div class="stripe-wrapper"><div id="stripeCardElement" class="stripe-element"></div><p class="stripe-error" id="stripeError"></p></div>
         <button class="btn-primary btn-full" id="confirmPayment">🔒 Payer 20€ maintenant</button>
-        <p class="summary-note">💳 Carte bancaire · 3D Secure</p>
+              <p class="summary-note" style="display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 0.8rem;">
+          <span>🔒 Paiement 100% sécurisé</span>
+          <span>✅ Sans engagement</span>
+          <span>💳 Carte bancaire</span>
+        </p>
       </div>
       <div class="modal-step" id="modalStep3">
         <div class="success-icon">✅</div><h3>Réservation confirmée !</h3>
