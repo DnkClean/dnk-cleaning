@@ -326,3 +326,32 @@ section { padding: 100px 0; }
   line-height: 1.6;
   margin: 0;
 }
+/* ===== SYSTÈME D'ÉTOILES (UNE SEULE LIGNE) ===== */
+.rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+
+.star {
+  color: rgba(255, 255, 255, 0.15); /* La couleur des étoiles vides (grises) */
+  position: relative;
+  display: inline-block;
+}
+
+.star.filled {
+  color: #FFD700; /* La couleur des étoiles pleines (jaune) */
+}
+
+/* L'astuce pour la demi-étoile : on coupe l'étoile en deux */
+.star.half::before {
+  content: '★';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%; /* Coupe l'étoile à 50% */
+  overflow: hidden;
+  color: #FFD700; 
+}
