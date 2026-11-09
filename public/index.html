@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <!-- SEO LOCAL OPTIMISÉ -->
   <title>Nettoyage Auto & Canapé à Domicile (77/89) | DNK-CLEANING</title>
   <meta name="description" content="DNK-CLEANING : Lavage auto et nettoyage de canapé à domicile à Provins, Sens et alentours. Produits écologiques, résultat garanti. Réservez en ligne avec 20€ d'acompte.">
@@ -11,6 +14,8 @@
   <meta property="og:description" content="Redonnez l'éclat à votre voiture ou votre canapé sans bouger de chez vous. Intervention à Provins, Sens et alentours.">
   <meta property="og:image" content="https://dnk-cleaning.fr/images/apres.jpg">
   <meta property="og:type" content="website">
+
+  <!-- Balises Schema.org pour Google (Local Business) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -28,6 +33,11 @@
     "url": "https://dnk-cleaning.fr"
   }
   </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Montserrat:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -41,7 +51,7 @@
         <a href="#services">Prestations</a>
         <a href="#packs">Packs</a>
         <a href="#resultats">Résultats</a>
-        <a href="#avis">Avis</a> <!-- Lien Avis réintégré -->
+        <a href="#avis">Avis</a>
         <a href="a-propos.html">À propos</a>
         <a href="#reservation" class="btn-nav">Réserver</a>
       </nav>
@@ -148,7 +158,7 @@
     </div>
   </section>
 
-  <!-- SECTION AVIS (RÉINTÉGRÉE) -->
+  <!-- SECTION AVIS -->
   <section class="reviews" id="avis">
     <div class="container"><div class="section-head"><span class="section-tag">Avis clients</span><h2>ILS ONT ADORÉ, <span class="gradient-text">TU VAS KIFFER</span></h2></div></div>
     <div class="marquee"><div class="marquee-track">
@@ -306,6 +316,7 @@
             <p class="summary-note" style="margin: 0;">🔒 Paiement sécurisé Stripe</p>
             <p class="summary-note" style="margin: 0; color: #00A8FF; font-weight: 600;">Réponse garantie sous 24h</p>
           </div>
+        </div>
       </div>
     </div>
   </section>
@@ -334,7 +345,7 @@
         </div>
         <div class="stripe-wrapper"><div id="stripeCardElement" class="stripe-element"></div><p class="stripe-error" id="stripeError"></p></div>
         <button class="btn-primary btn-full" id="confirmPayment">🔒 Payer 20€ maintenant</button>
-              <p class="summary-note" style="display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 0.8rem;">
+        <p class="summary-note" style="display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 0.8rem;">
           <span>🔒 Paiement 100% sécurisé</span>
           <span>✅ Sans engagement</span>
           <span>💳 Carte bancaire</span>
@@ -356,7 +367,10 @@
       <div><h4>Prestations</h4><a href="#services">Lavage auto</a><a href="#services">Nettoyage textile</a><a href="#packs">Packs & tarifs</a></div>
       <div><h4>Contact</h4><a href="tel:0668730282">06 68 73 02 82</a><a href="https://wa.me/33668730282">WhatsApp</a><a href="#reservation">Réserver en ligne</a></div>
     </div>
-    <div class="footer-bottom"><p>© 2026 DNK-CLEANING — Tous droits réservés</p></div>
+    <div class="footer-bottom" style="display: flex; flex-direction: column; gap: 10px;">
+      <p>© 2026 DNK-CLEANING — Tous droits réservés</p>
+      <a href="mentions-legales.html" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: underline;">Mentions légales</a>
+    </div>
   </footer>
 
   <script src="script.js"></script>
