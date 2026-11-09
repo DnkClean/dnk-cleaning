@@ -94,24 +94,12 @@ section { padding: 100px 0; }
 .btn-outline { display: block; text-align: center; padding: 14px; border-radius: 100px; border: 1px solid var(--border); font-weight: 600; transition: all 0.2s; }
 .btn-outline:hover { border-color: var(--accent); color: var(--accent-2); }
 
-/* ===== PRESTATION DÉSACTIVÉE (Bientôt disponible) ===== */
-.pack-card.disabled {
-  opacity: 0.5;
-  filter: grayscale(1);
-  pointer-events: none;
-  position: relative;
-}
-.badge-coming {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-  background: #333; color: #FFF; padding: 6px 20px; border-radius: 100px;
-  font-size: 0.8rem; font-weight: 700; white-space: nowrap; z-index: 10;
-}
-.disabled-btn {
-  background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: transparent; cursor: not-allowed;
-}
+/* PRESTATION DÉSACTIVÉE */
+.pack-card.disabled { opacity: 0.5; filter: grayscale(1); pointer-events: none; position: relative; }
+.badge-coming { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #333; color: #FFF; padding: 6px 20px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; z-index: 10; }
+.disabled-btn { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: transparent; cursor: not-allowed; }
 .pack-option.disabled-option { opacity: 0.4; cursor: not-allowed; }
 .pack-option.disabled-option .pack-option-inner { pointer-events: none; background: rgba(255,255,255,0.02); }
-/* ======================================================= */
 
 .ba-container { position: relative; max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; cursor: ew-resize; border: 1px solid var(--border); }
 .ba-after, .ba-before { position: absolute; inset: 0; background-size: cover; background-position: center; }
@@ -129,9 +117,32 @@ section { padding: 100px 0; }
 .marquee-track:hover { animation-play-state: paused; }
 @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 .review-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; min-width: 340px; max-width: 340px; }
-.stars { color: #FFD700; margin-bottom: 12px; letter-spacing: 2px; }
 .review-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px; }
 .review-card span { font-weight: 600; font-size: 0.85rem; }
+
+/* ===== SYSTÈME D'ÉTOILES (UNE SEULE LIGNE) ===== */
+.rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+.star {
+  color: rgba(255, 255, 255, 0.15);
+  position: relative;
+  display: inline-block;
+}
+.star.filled { color: #FFD700; }
+.star.half::before {
+  content: '★';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
+  color: #FFD700;
+}
 
 .booking { background: var(--bg); }
 .booking-wrapper { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; max-width: 1100px; margin: 0 auto; }
@@ -268,90 +279,4 @@ section { padding: 100px 0; }
   .modal-card { padding: 28px 24px; }
   .form-row { grid-template-columns: 1fr; }
   .vehicle-grid { grid-template-columns: 1fr 1fr; }
-}
-/* ===== STYLE DE LA FAQ (ACCORDÉON) ===== */
-.faq-details-section {
-  padding: 0 24px 100px;
-  background: var(--bg);
-}
-
-.faq-item {
-  background: #111;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 16px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.faq-item[open] {
-  border-color: var(--accent);
-  box-shadow: 0 4px 20px rgba(0,108,255,0.1);
-}
-
-.faq-item summary {
-  padding: 20px 24px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #FFF;
-  cursor: pointer;
-  list-style: none; /* Enlève la flèche par défaut */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-body);
-}
-
-/* On crée notre propre icône "+" */
-.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq-item summary::after {
-  content: '+';
-  font-size: 1.5rem;
-  color: var(--accent-2);
-  transition: transform 0.3s ease;
-}
-
-.faq-item[open] summary::after {
-  content: '−'; /* Devient un "-" quand c'est ouvert */
-  transform: rotate(180deg);
-}
-
-.faq-item p {
-  padding: 0 24px 24px;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0;
-}
-/* ===== SYSTÈME D'ÉTOILES (UNE SEULE LIGNE) ===== */
-.rating {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-  font-size: 1.3rem;
-  letter-spacing: 2px;
-}
-
-.star {
-  color: rgba(255, 255, 255, 0.15); /* La couleur des étoiles vides (grises) */
-  position: relative;
-  display: inline-block;
-}
-
-.star.filled {
-  color: #FFD700; /* La couleur des étoiles pleines (jaune) */
-}
-
-/* L'astuce pour la demi-étoile : on coupe l'étoile en deux */
-.star.half::before {
-  content: '★';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 50%; /* Coupe l'étoile à 50% */
-  overflow: hidden;
-  color: #FFD700; 
 }
