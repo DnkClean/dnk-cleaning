@@ -5,9 +5,7 @@ const DEPOSIT_AMOUNT = 2000;
 const MAX_BOOKINGS_PER_SLOT = 1;
 const TIME_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];
 
-// ===== INITIALISATION UI =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Navigation des étapes du formulaire
   let currentStep = 1;
   const totalSteps = 3;
   const steps = document.querySelectorAll('.booking-step');
@@ -32,47 +30,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ==========================================
-  // BOUTON "ENVOYER MA DEMANDE" (LE BOUTON BLEU)
-  // ==========================================
   document.getElementById('submitBooking')?.addEventListener('click', (e) => {
     e.preventDefault();
-    
-    // 1. Si on n'est pas à l'étape 3, on y va automatiquement
-    if (currentStep !== 3) {
-      goToStep(3);
-      return;
-    }
-
-    // 2. Si on est à l'étape 3, on vérifie que les champs sont remplis
+    if (currentStep !== 3) { goToStep(3); return; }
     const form = document.getElementById('bookingForm');
-    if (!form.checkValidity()) { 
-      form.reportValidity(); 
-      return; 
-    }
-    
-    // 3. Si tout est bon, on scrolle vers le calendrier
+    if (!form.checkValidity()) { form.reportValidity(); return; }
     document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
   });
 
   // ==========================================
-  // SÉLECTION DU VÉHICULE
+  // GESTION VÉHICULE ET AFFICHAGE OPTIONS
   // ==========================================
+  const vehicleConditionField = document.getElementById('vehicleConditionField');
+  const carOptionsField = document.getElementById('carOptionsField');
+  const sofaOptionsField = document.getElementById('sofaOptionsField');
+
   document.querySelectorAll('.vehicle-option').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.vehicle-option').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       
       const vehicleType = btn.dataset.vehicle;
-      
-      // SYNCHRONISATION AUTOMATIQUE DU PACK
-      if (vehicleType === 'canape') {
+      const isCanape = (vehicleType === 'canape');
+
+      // Affichage/Masquage des blocs d'options
+      if (isCanape) {
+        if(vehicleConditionField) vehicleConditionField.style.display = 'none';
+        if(carOptionsField) carOptionsField.style.display = 'none';
+        if(sofaOptionsField) sofaOptionsField.style.display = 'block';
+        
         const canapePack = document.querySelector('input[name="pack"][value="canape"]');
         if (canapePack) {
           canapePack.checked = true;
           canapePack.dispatchEvent(new Event('change'));
         }
       } else {
+        if(vehicleConditionField) vehicleConditionField.style.display = 'block';
+        if(carOptionsField) carOptionsField.style.display = 'block';
+        if(sofaOptionsField) sofaOptionsField.style.display = 'none';
+
         const interieurPack = document.querySelector('input[name="pack"][value="interieur"]');
         if (interieurPack) {
           interieurPack.checked = true;
@@ -83,30 +79,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ==========================================
-  // SÉLECTION DU PACK
-  // ==========================================
   document.querySelectorAll('input[name="pack"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      // SYNCHRONISATION AUTOMATIQUE DU VÉHICULE
       if (radio.value === 'canape') {
         const canapeBtn = document.querySelector('.vehicle-option[data-vehicle="canape"]');
         if (canapeBtn) {
           document.querySelectorAll('.vehicle-option').forEach(b => b.classList.remove('active'));
           canapeBtn.classList.add('active');
-        }
-      } else {
-        const activeVehicle = document.querySelector('.vehicle-option.active');
-        if (activeVehicle && activeVehicle.dataset.vehicle === 'canape') {
-          const citadineBtn = document.querySelector('.vehicle-option[data-vehicle="citadine"]');
-          if (citadineBtn) {
-            document.querySelectorAll('.vehicle-option').forEach(b => b.classList.remove('active'));
-            citadineBtn.classList.add('active');
-          }
+          if(vehicleConditionField) vehicleConditionField.style.display = 'none';
+          if(carOptionsField) carOptionsField.style.display = 'none';
+          if(sofaOptionsField) sofaOptionsField.style.display = 'block';
         }
       }
       updatePrices();
     });
+  });
+
+  // Écouter les changements d'état et d'options
+  document.querySelectorAll('input[name="condition"], input[name="extras_car"], input[name="extras_sofa"]').forEach(input => {
+    input.addEventListener('change', updatePrices);
   });
 
   // ==========================================
@@ -114,27 +105,72 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   function updatePrices() {
     const vehicle = document.querySelector('.vehicle-option.active');
-    const multiplier = parseFloat(vehicle?.dataset.multiplier || 1);
+    const isCanape = (vehicle?.dataset.vehicle === 'canape');
+    const multiplier = isCanape ? 1 : parseFloat(vehicle?.dataset.multiplier || 1);
     const vehicleName = vehicle?.querySelector('.vehicle-name').textContent || '—';
+    
     const packInput = document.querySelector('input[name="pack"]:checked');
     const packPrice = packInput ? parseFloat(packInput.dataset.price) : 129;
     
-    const finalMultiplier = (vehicle?.dataset.vehicle === 'canape') ? 1 : multiplier;
-    const total = Math.round(packPrice * finalMultiplier);
-    const supp = total - packPrice;
+    // Prix de base avec multiplicateur
+    let total = Math.round(packPrice * multiplier);
+    let extrasText = "";
 
-    if (document.getElementById('sumVehicle')) document.getElementById('sumVehicle').textContent = vehicleName;
-    if (document.getElementById('sumPack')) document.getElementById('sumPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
-    if (document.getElementById('sumSupp')) document.getElementById('sumSupp').textContent = supp > 0 ? `+${supp}€` : '+0€';
-    if (document.getElementById('sumTotal')) document.getElementById('sumTotal').textContent = `${total}€`;
+    // Ajout de l'état de la voiture (si voiture)
+    if (!isCanape) {
+      const conditionInput = document.querySelector('input[name="condition"]:checked');
+      if (conditionInput) {
+        const conditionPrice = parseFloat(conditionInput.dataset.price);
+        total += conditionPrice;
+        if (conditionPrice > 0) extrasText += `${conditionInput.value} (+${conditionPrice}€) `;
+      }
+    }
 
-    document.querySelectorAll('.pack-option-price').forEach(el => {
-      el.textContent = `${Math.round(parseFloat(el.dataset.base) * finalMultiplier)}€`;
+    // Ajout des options (voiture ou canapé)
+    const activeExtras = isCanape 
+      ? document.querySelectorAll('input[name="extras_sofa"]:checked') 
+      : document.querySelectorAll('input[name="extras_car"]:checked');
+
+    activeExtras.forEach(extra => {
+      const extraPrice = parseFloat(extra.dataset.price);
+      total += extraPrice;
+      extrasText += `${extra.value} (+${extraPrice}€) `;
     });
 
+    // Mise à jour de l'affichage
+    if (document.getElementById('sumVehicle')) document.getElementById('sumVehicle').textContent = vehicleName;
+    if (document.getElementById('sumPack')) document.getElementById('sumPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
+    
+    // Affichage des extras dans le récap
+    const suppLine = document.getElementById('sumSupp');
+    if (suppLine) {
+      if (extrasText.trim() !== "") {
+        suppLine.innerHTML = extrasText.replace(/ /g, '<br>');
+        suppLine.style.color = 'var(--accent-2)';
+      } else {
+        suppLine.textContent = '+0€';
+        suppLine.style.color = 'var(--text-muted)';
+      }
+    }
+
+    if (document.getElementById('sumTotal')) document.getElementById('sumTotal').textContent = `${total}€`;
+
+    // Mise à jour du calendrier
     if (document.getElementById('recapVehicle')) document.getElementById('recapVehicle').textContent = vehicleName;
     if (document.getElementById('recapPack')) document.getElementById('recapPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
     if (document.getElementById('recapTotal')) document.getElementById('recapTotal').textContent = `${total}€`;
+
+    // Sauvegarde pour Stripe
+    window._bookingData = { 
+      date: selectedDate, 
+      slot: selectedSlot, 
+      vehicle: vehicleName, 
+      pack: packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—', 
+      total: total, 
+      deposit: 20, 
+      reste: total - 20,
+      extras: extrasText.trim()
+    };
   }
 
   // ==========================================
@@ -232,16 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('recapTime').textContent = selectedSlot;
       goBtn.disabled = false;
       
-      const total = parseInt(document.getElementById('sumTotal').textContent);
-      window._bookingData = { 
-        date: selectedDate, 
-        slot: selectedSlot, 
-        vehicle: document.getElementById('sumVehicle').textContent, 
-        pack: document.getElementById('sumPack').textContent, 
-        total: total, 
-        deposit: 20, 
-        reste: total - 20 
-      };
+      // On récupère les données actuelles
+      updatePrices();
     } else {
       recap.style.display = 'none';
       goBtn.disabled = true;
@@ -251,12 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('prevMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
   document.getElementById('nextMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
 
-  // Lancement des fonctions
+  // Lancement
   updatePrices();
   loadBookedSlots().then(renderCalendar);
 
   // =====================================================================
-  // PARTIE STRIPE
+  // STRIPE
   // =====================================================================
   let stripe = null;
   let cardElement = null;
