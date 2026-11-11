@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (prevBtn) prevBtn.disabled = currentStep === 1;
     
-    // Changement du texte du bouton à la dernière étape
     if (nextBtn) {
       nextBtn.textContent = currentStep === totalSteps ? '✓ Valider et choisir un créneau' : 'Suivant →';
     }
@@ -31,16 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (nextBtn) {
     nextBtn.addEventListener('click', () => { 
       if (currentStep === totalSteps) {
-        // Validation du formulaire à l'étape 3
         const form = document.getElementById('bookingForm');
         if (!form.checkValidity()) { 
           form.reportValidity(); 
           return; 
         }
-        // Scroll vers le calendrier
         document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
       } else {
-        // Passage à l'étape suivante
         goToStep(currentStep + 1); 
       }
     });
@@ -49,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // GESTION VÉHICULE ET AFFICHAGE OPTIONS
   // ==========================================
+  const carPacksContainer = document.getElementById('carPacksContainer');
+  const sofaPacksContainer = document.getElementById('sofaPacksContainer');
   const vehicleConditionField = document.getElementById('vehicleConditionField');
-  const carOptionsField = document.getElementById('carOptionsField');
-  const sofaOptionsField = document.getElementById('sofaOptionsField');
 
   document.querySelectorAll('.vehicle-option').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -63,46 +59,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isCanape) {
         if(vehicleConditionField) vehicleConditionField.style.display = 'none';
-        if(carOptionsField) carOptionsField.style.display = 'none';
-        if(sofaOptionsField) sofaOptionsField.style.display = 'block';
+        if(carPacksContainer) carPacksContainer.style.display = 'none';
+        if(sofaPacksContainer) sofaPacksContainer.style.display = 'block';
         
-        const canapePack = document.querySelector('input[name="pack"][value="canape"]');
-        if (canapePack) {
-          canapePack.checked = true;
-          canapePack.dispatchEvent(new Event('change'));
-        }
+        // On coche le premier pack canapé par défaut
+        const defaultSofa = document.querySelector('input[name="pack_sofa"][value="canape_2p"]');
+        if (defaultSofa) defaultSofa.checked = true;
       } else {
         if(vehicleConditionField) vehicleConditionField.style.display = 'block';
-        if(carOptionsField) carOptionsField.style.display = 'block';
-        if(sofaOptionsField) sofaOptionsField.style.display = 'none';
+        if(carPacksContainer) carPacksContainer.style.display = 'block';
+        if(sofaPacksContainer) sofaPacksContainer.style.display = 'none';
 
-        const interieurPack = document.querySelector('input[name="pack"][value="interieur"]');
-        if (interieurPack) {
-          interieurPack.checked = true;
-          interieurPack.dispatchEvent(new Event('change'));
-        }
+        // On coche le premier pack voiture par défaut
+        const defaultCar = document.querySelector('input[name="pack"][value="interieur"]');
+        if (defaultCar) defaultCar.checked = true;
       }
       updatePrices();
     });
   });
 
-  document.querySelectorAll('input[name="pack"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (radio.value === 'canape') {
-        const canapeBtn = document.querySelector('.vehicle-option[data-vehicle="canape"]');
-        if (canapeBtn) {
-          document.querySelectorAll('.vehicle-option').forEach(b => b.classList.remove('active'));
-          canapeBtn.classList.add('active');
-          if(vehicleConditionField) vehicleConditionField.style.display = 'none';
-          if(carOptionsField) carOptionsField.style.display = 'none';
-          if(sofaOptionsField) sofaOptionsField.style.display = 'block';
-        }
-      }
-      updatePrices();
-    });
-  });
-
-  document.querySelectorAll('input[name="condition"], input[name="extras_car"], input[name="extras_sofa"]').forEach(input => {
+  // Écouter les changements de packs et d'options
+  document.querySelectorAll('input[name="pack"], input[name="pack_sofa"], input[name="condition"], input[name="extras_car"], input[name="extras_sofa"]').forEach(input => {
     input.addEventListener('change', updatePrices);
   });
 
@@ -112,12 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const multiplier = isCanape ? 1 : parseFloat(vehicle?.dataset.multiplier || 1);
     const vehicleName = vehicle?.querySelector('.vehicle-name').textContent || '—';
     
-    const packInput = document.querySelector('input[name="pack"]:checked');
-    const packPrice = packInput ? parseFloat(packInput.dataset.price) : 129;
+    // Trouver le pack sélectionné (voiture ou canapé)
+    const activePack = isCanape 
+      ? document.querySelector('input[name="pack_sofa"]:checked')
+      : document.querySelector('input[name="pack"]:checked');
+
+    const packPrice = activePack ? parseFloat(activePack.dataset.price) : 0;
+    const packLabel = activePack ? activePack.closest('.pack-option').querySelector('span').textContent : '—';
     
+    // Prix de base avec multiplicateur (uniquement voiture)
     let total = Math.round(packPrice * multiplier);
     let extrasText = "";
 
+    // Ajout de l'état de la voiture (si voiture)
     if (!isCanape) {
       const conditionInput = document.querySelector('input[name="condition"]:checked');
       if (conditionInput) {
@@ -127,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Ajout des options (voiture ou canapé)
     const activeExtras = isCanape 
       ? document.querySelectorAll('input[name="extras_sofa"]:checked') 
       : document.querySelectorAll('input[name="extras_car"]:checked');
@@ -137,8 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
       extrasText += `${extra.value} (+${extraPrice}€) `;
     });
 
+    // Mise à jour de l'affichage
     if (document.getElementById('sumVehicle')) document.getElementById('sumVehicle').textContent = vehicleName;
-    if (document.getElementById('sumPack')) document.getElementById('sumPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
+    if (document.getElementById('sumPack')) document.getElementById('sumPack').textContent = packLabel;
     
     const suppLine = document.getElementById('sumSupp');
     if (suppLine) {
@@ -153,15 +139,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('sumTotal')) document.getElementById('sumTotal').textContent = `${total}€`;
 
+    // Mise à jour du calendrier
     if (document.getElementById('recapVehicle')) document.getElementById('recapVehicle').textContent = vehicleName;
-    if (document.getElementById('recapPack')) document.getElementById('recapPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
+    if (document.getElementById('recapPack')) document.getElementById('recapPack').textContent = packLabel;
     if (document.getElementById('recapTotal')) document.getElementById('recapTotal').textContent = `${total}€`;
 
     window._bookingData = { 
       date: selectedDate, 
       slot: selectedSlot, 
       vehicle: vehicleName, 
-      pack: packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—', 
+      pack: packLabel, 
       total: total, 
       deposit: 20, 
       reste: total - 20,
