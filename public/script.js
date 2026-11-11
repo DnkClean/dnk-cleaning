@@ -17,26 +17,34 @@ document.addEventListener('DOMContentLoaded', () => {
     currentStep = Math.max(1, Math.min(totalSteps, step));
     steps.forEach(s => s.classList.toggle('active', +s.dataset.step === currentStep));
     dots.forEach((d, i) => d.classList.toggle('active', i === currentStep - 1));
+    
     if (prevBtn) prevBtn.disabled = currentStep === 1;
-    if (nextBtn) nextBtn.textContent = currentStep === totalSteps ? '✓ Envoyer' : 'Suivant →';
+    
+    // Changement du texte du bouton à la dernière étape
+    if (nextBtn) {
+      nextBtn.textContent = currentStep === totalSteps ? '✓ Valider et choisir un créneau' : 'Suivant →';
+    }
   }
 
   if (prevBtn) prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
-  if (nextBtn) nextBtn.addEventListener('click', () => { 
-    if (currentStep === totalSteps) {
-      document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
-    } else {
-      goToStep(currentStep + 1); 
-    }
-  });
-
-  document.getElementById('submitBooking')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (currentStep !== 3) { goToStep(3); return; }
-    const form = document.getElementById('bookingForm');
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
-  });
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => { 
+      if (currentStep === totalSteps) {
+        // Validation du formulaire à l'étape 3
+        const form = document.getElementById('bookingForm');
+        if (!form.checkValidity()) { 
+          form.reportValidity(); 
+          return; 
+        }
+        // Scroll vers le calendrier
+        document.getElementById('calendrier').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Passage à l'étape suivante
+        goToStep(currentStep + 1); 
+      }
+    });
+  }
 
   // ==========================================
   // GESTION VÉHICULE ET AFFICHAGE OPTIONS
@@ -53,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const vehicleType = btn.dataset.vehicle;
       const isCanape = (vehicleType === 'canape');
 
-      // Affichage/Masquage des blocs d'options
       if (isCanape) {
         if(vehicleConditionField) vehicleConditionField.style.display = 'none';
         if(carOptionsField) carOptionsField.style.display = 'none';
@@ -95,14 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Écouter les changements d'état et d'options
   document.querySelectorAll('input[name="condition"], input[name="extras_car"], input[name="extras_sofa"]').forEach(input => {
     input.addEventListener('change', updatePrices);
   });
 
-  // ==========================================
-  // CALCUL DES PRIX
-  // ==========================================
   function updatePrices() {
     const vehicle = document.querySelector('.vehicle-option.active');
     const isCanape = (vehicle?.dataset.vehicle === 'canape');
@@ -112,11 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const packInput = document.querySelector('input[name="pack"]:checked');
     const packPrice = packInput ? parseFloat(packInput.dataset.price) : 129;
     
-    // Prix de base avec multiplicateur
     let total = Math.round(packPrice * multiplier);
     let extrasText = "";
 
-    // Ajout de l'état de la voiture (si voiture)
     if (!isCanape) {
       const conditionInput = document.querySelector('input[name="condition"]:checked');
       if (conditionInput) {
@@ -126,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Ajout des options (voiture ou canapé)
     const activeExtras = isCanape 
       ? document.querySelectorAll('input[name="extras_sofa"]:checked') 
       : document.querySelectorAll('input[name="extras_car"]:checked');
@@ -137,11 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
       extrasText += `${extra.value} (+${extraPrice}€) `;
     });
 
-    // Mise à jour de l'affichage
     if (document.getElementById('sumVehicle')) document.getElementById('sumVehicle').textContent = vehicleName;
     if (document.getElementById('sumPack')) document.getElementById('sumPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
     
-    // Affichage des extras dans le récap
     const suppLine = document.getElementById('sumSupp');
     if (suppLine) {
       if (extrasText.trim() !== "") {
@@ -155,12 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('sumTotal')) document.getElementById('sumTotal').textContent = `${total}€`;
 
-    // Mise à jour du calendrier
     if (document.getElementById('recapVehicle')) document.getElementById('recapVehicle').textContent = vehicleName;
     if (document.getElementById('recapPack')) document.getElementById('recapPack').textContent = packInput ? packInput.closest('.pack-option').querySelector('span').textContent : '—';
     if (document.getElementById('recapTotal')) document.getElementById('recapTotal').textContent = `${total}€`;
 
-    // Sauvegarde pour Stripe
     window._bookingData = { 
       date: selectedDate, 
       slot: selectedSlot, 
@@ -268,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('recapTime').textContent = selectedSlot;
       goBtn.disabled = false;
       
-      // On récupère les données actuelles
       updatePrices();
     } else {
       recap.style.display = 'none';
@@ -279,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('prevMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
   document.getElementById('nextMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
 
-  // Lancement
   updatePrices();
   loadBookedSlots().then(renderCalendar);
 
