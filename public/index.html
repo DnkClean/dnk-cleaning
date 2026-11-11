@@ -256,53 +256,67 @@
           </div>
         </div>
 
+        <!-- ÉTAPE 2 : SÉPARATION VOITURE / CANAPÉ -->
         <div class="booking-step" data-step="2">
           <div class="step-head"><span class="step-num">2</span><h3>Ton pack</h3></div>
-          <div class="pack-selector">
-            <label class="pack-option"><input type="radio" name="pack" value="interieur" data-price="129" checked><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Intérieur</span><span class="pack-option-price" data-base="129">129€</span></div><p>Aspiration, shampoing sièges, vitrerie</p></div></label>
-            
-            <label class="pack-option disabled-option">
-              <input type="radio" name="pack" value="complet" data-price="179" disabled>
-              <div class="pack-option-inner">
-                <div class="pack-option-head"><span>Nettoyage Complet (Bientôt)</span><span class="pack-option-price" data-base="179">179€</span></div>
-                <p>Tout l'intérieur + lavage extérieur</p>
+          
+          <!-- POUR LES VOITURES -->
+          <div id="carPacksContainer">
+            <div class="pack-selector">
+              <label class="pack-option"><input type="radio" name="pack" value="interieur" data-price="129" checked><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Intérieur</span><span class="pack-option-price">129€</span></div><p>Aspiration, shampoing sièges, vitrerie</p></div></label>
+              
+              <label class="pack-option disabled-option">
+                <input type="radio" name="pack" value="complet" data-price="179" disabled>
+                <div class="pack-option-inner">
+                  <div class="pack-option-head"><span>Nettoyage Complet (Bientôt)</span><span class="pack-option-price">179€</span></div>
+                  <p>Tout l'intérieur + lavage extérieur</p>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group" id="carOptionsField" style="margin-top: 24px;">
+              <label>Options supplémentaires (Voiture)</label>
+              <div class="extra-options-list">
+                <label class="extra-option">
+                  <input type="checkbox" name="extras_car" value="Poils d'animaux" data-price="15">
+                  <span class="extra-btn">🐾 Traitement poils d'animaux (+15€)</span>
+                </label>
+                <label class="extra-option">
+                  <input type="checkbox" name="extras_car" value="Compartiment moteur" data-price="20">
+                  <span class="extra-btn">🔧 Nettoyage compartiment moteur (+20€)</span>
+                </label>
+                <label class="extra-option">
+                  <input type="checkbox" name="extras_car" value="Traitement ozone" data-price="25">
+                  <span class="extra-btn">🌬️ Traitement ozone (odeurs) (+25€)</span>
+                </label>
               </div>
-            </label>
-
-            <label class="pack-option"><input type="radio" name="pack" value="canape" data-price="89"><div class="pack-option-inner"><div class="pack-option-head"><span>Nettoyage Canapé</span><span class="pack-option-price" data-base="89">89€</span></div><p>Shampoing profond</p></div></label>
-          </div>
-
-          <div class="form-group" id="carOptionsField" style="margin-top: 24px;">
-            <label>Options supplémentaires (Voiture)</label>
-            <div class="extra-options-list">
-              <label class="extra-option">
-                <input type="checkbox" name="extras_car" value="Poils d'animaux" data-price="15">
-                <span class="extra-btn">🐾 Traitement poils d'animaux (+15€)</span>
-              </label>
-              <label class="extra-option">
-                <input type="checkbox" name="extras_car" value="Compartiment moteur" data-price="20">
-                <span class="extra-btn">🔧 Nettoyage compartiment moteur (+20€)</span>
-              </label>
-              <label class="extra-option">
-                <input type="checkbox" name="extras_car" value="Traitement ozone" data-price="25">
-                <span class="extra-btn">🌬️ Traitement ozone (odeurs) (+25€)</span>
-              </label>
             </div>
           </div>
 
-          <div class="form-group" id="sofaOptionsField" style="display: none; margin-top: 24px;">
-            <label>Options supplémentaires (Canapé)</label>
-            <div class="extra-options-list">
-              <label class="extra-option">
-                <input type="checkbox" name="extras_sofa" value="Anti-acariens" data-price="15">
-                <span class="extra-btn">🦠 Traitement anti-acariens (+15€)</span>
-              </label>
-              <label class="extra-option">
-                <input type="checkbox" name="extras_sofa" value="Détachage intensif" data-price="20">
-                <span class="extra-btn">🧪 Détachage intensif (+20€)</span>
-              </label>
+          <!-- POUR LES CANAPÉS -->
+          <div id="sofaPacksContainer" style="display: none;">
+            <div class="pack-selector">
+              <label class="pack-option"><input type="radio" name="pack_sofa" value="canape_2p" data-price="89" checked><div class="pack-option-inner"><div class="pack-option-head"><span>Canapé 2 places</span><span class="pack-option-price">89€</span></div><p>Shampoing profond</p></div></label>
+              <label class="pack-option"><input type="radio" name="pack_sofa" value="canape_3p" data-price="109"><div class="pack-option-inner"><div class="pack-option-head"><span>Canapé 3 places</span><span class="pack-option-price">109€</span></div><p>Shampoing profond</p></div></label>
+              <label class="pack-option"><input type="radio" name="pack_sofa" value="canape_angle" data-price="139"><div class="pack-option-inner"><div class="pack-option-head"><span>Canapé d'angle</span><span class="pack-option-price">139€</span></div><p>Shampoing profond</p></div></label>
+              <label class="pack-option"><input type="radio" name="pack_sofa" value="canape_clic" data-price="129"><div class="pack-option-inner"><div class="pack-option-head"><span>Canapé clic-clac</span><span class="pack-option-price">129€</span></div><p>Shampoing profond</p></div></label>
+            </div>
+
+            <div class="form-group" id="sofaOptionsField" style="margin-top: 24px;">
+              <label>Options supplémentaires (Canapé)</label>
+              <div class="extra-options-list">
+                <label class="extra-option">
+                  <input type="checkbox" name="extras_sofa" value="Anti-acariens" data-price="15">
+                  <span class="extra-btn">🦠 Traitement anti-acariens (+15€)</span>
+                </label>
+                <label class="extra-option">
+                  <input type="checkbox" name="extras_sofa" value="Détachage intensif" data-price="20">
+                  <span class="extra-btn">🧪 Détachage intensif (+20€)</span>
+                </label>
+              </div>
             </div>
           </div>
+
         </div>
 
         <div class="booking-step" data-step="3">
@@ -323,7 +337,6 @@
           <div class="summary-line"><span>Options / État</span><strong id="sumSupp">+0€</strong></div>
           <div class="summary-total"><span>Total estimé</span><strong id="sumTotal">129€</strong></div>
           
-          <!-- NOUVEAUX BOUTONS DE NAVIGATION -->
           <div class="summary-actions">
             <button class="btn-step" id="prevStep" disabled>← Précédent</button>
             <button class="btn-primary btn-full" id="nextStep">Suivant →</button>
